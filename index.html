@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1e1e2e">
+<meta name="theme-color" content="#1a1a2e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
@@ -11,1197 +11,752 @@
 <title>ShardWallet</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ══════════════════════════════════════════
-   MONERO-STYLE SHARDWALLET
-   Left sidebar + content area desktop layout
-   Bottom nav on mobile
-   ══════════════════════════════════════════ */
-
 :root {
-  --bg-sidebar: #1e1e2e;
-  --bg-sidebar-active: #2a2a3e;
-  --bg-sidebar-hover: #252538;
-  --bg-content: #f5f5f7;
-  --bg-card: #ffffff;
-  --bg-input: #f0f0f4;
-  --bg-header: #ffffff;
-  --accent: #6B49C8;
-  --accent-light: #8b6ce0;
-  --accent-dim: #6B49C815;
-  --accent-glow: #6B49C830;
-  --text-dark: #1a1a2e;
-  --text-body: #3a3a5c;
-  --text-muted: #8888aa;
-  --text-sidebar: #b0b0cc;
-  --text-sidebar-active: #ffffff;
-  --border: #e0e0ea;
-  --border-input: #d0d0de;
-  --success: #2ecc71;
-  --danger: #e74c3c;
-  --warning: #f39c12;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.08);
+  --sidebar: #16162a;
+  --sidebar-active: #1f1f3a;
+  --sidebar-hover: #1c1c34;
+  --sidebar-border: #252545;
+  --content: #f2f2f6;
+  --card: #ffffff;
+  --input-bg: #f0f0f5;
+  --header: #ffffff;
+  --accent: #7c5ce7;
+  --accent-hover: #9577f7;
+  --accent-bg: #7c5ce710;
+  --accent-border: #7c5ce730;
+  --text: #1a1a2e;
+  --text-body: #44446a;
+  --text-muted: #9999b8;
+  --text-light: #bbbbd0;
+  --text-sidebar: #8888aa;
+  --border: #e2e2ec;
+  --input-border: #d4d4e0;
+  --green: #00c48c;
+  --green-bg: #00c48c14;
+  --red: #ff4757;
+  --red-bg: #ff475714;
+  --orange: #ffa500;
+  --orange-bg: #ffa50014;
+  --r: 8px;
+  --r-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; font-family:'IBM Plex Sans',-apple-system,sans-serif; -webkit-font-smoothing:antialiased; background:var(--content); color:var(--text); }
+button { cursor:pointer; font-family:inherit; }
 
-html, body {
-  height: 100%;
-  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background: var(--bg-content);
-  color: var(--text-dark);
+/* ── App Shell ── */
+.app { display:flex; height:100vh; overflow:hidden; }
+
+/* ── Welcome Screen ── */
+.welcome {
+  position:fixed; inset:0; z-index:500;
+  background:var(--sidebar);
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column;
+  animation: fadeIn 0.4s ease;
+}
+.welcome.hidden { display:none; }
+
+@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+@keyframes slideUp { from { transform:translateY(20px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+
+.welcome-content {
+  text-align:center;
+  max-width:400px;
+  padding:24px;
+  animation: slideUp 0.5s ease 0.1s both;
 }
 
-/* ── Layout ── */
-.app {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+.welcome-logo {
+  width:80px; height:80px;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  border-radius:20px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'IBM Plex Mono',monospace;
+  font-weight:700; font-size:36px; color:#fff;
+  margin:0 auto 24px;
+  box-shadow: 0 8px 32px #7c5ce740;
 }
+
+.welcome h1 {
+  color:#fff; font-size:28px; font-weight:700;
+  letter-spacing:-0.5px; margin-bottom:8px;
+}
+
+.welcome p {
+  color:var(--text-sidebar); font-size:15px;
+  line-height:1.6; margin-bottom:32px;
+}
+
+.welcome-form {
+  text-align:left;
+  animation: slideUp 0.5s ease 0.25s both;
+}
+
+.welcome-form label {
+  display:block; font-size:12px; font-weight:600;
+  color:var(--text-sidebar); text-transform:uppercase;
+  letter-spacing:0.8px; margin-bottom:6px;
+}
+
+.welcome-form input {
+  width:100%; padding:12px 14px;
+  background:#0e0e20; border:1px solid var(--sidebar-border);
+  border-radius:var(--r); color:#fff;
+  font-family:'IBM Plex Mono',monospace; font-size:14px;
+  outline:none; margin-bottom:14px; transition:border 0.2s;
+}
+.welcome-form input:focus { border-color:var(--accent); }
+.welcome-form input::placeholder { color:#555; }
+
+.welcome-form .row { display:flex; gap:12px; }
+.welcome-form .row > div { flex:1; }
+
+.welcome-btn {
+  width:100%; padding:14px;
+  background:var(--accent); border:none; border-radius:var(--r);
+  color:#fff; font-size:15px; font-weight:600;
+  transition:all 0.2s; margin-top:8px;
+}
+.welcome-btn:hover { background:var(--accent-hover); box-shadow:0 4px 16px #7c5ce740; }
+
+.welcome-demo {
+  margin-top:16px;
+  background:none; border:1px solid var(--sidebar-border);
+  width:100%; padding:12px; border-radius:var(--r);
+  color:var(--text-sidebar); font-size:14px; font-weight:500;
+  transition:all 0.2s;
+}
+.welcome-demo:hover { border-color:var(--text-sidebar); color:#ddd; }
+
+.welcome-skip {
+  margin-top:24px;
+  color:var(--text-muted); font-size:13px;
+  background:none; border:none; text-decoration:underline;
+  opacity:0.6; transition:opacity 0.2s;
+}
+.welcome-skip:hover { opacity:1; }
 
 /* ── Sidebar ── */
 .sidebar {
-  width: 260px;
-  background: var(--bg-sidebar);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  overflow: hidden;
+  width:250px; background:var(--sidebar);
+  display:flex; flex-direction:column; flex-shrink:0;
 }
 
-.sidebar-brand {
-  padding: 28px 24px 24px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid #2a2a40;
+.sb-brand {
+  padding:22px 20px; display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid var(--sidebar-border);
 }
 
-.brand-icon {
-  width: 42px; height: 42px;
-  background: var(--accent);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 700;
-  font-size: 20px;
-  color: #fff;
+.sb-logo {
+  width:36px; height:36px; background:var(--accent);
+  border-radius:9px; display:flex; align-items:center; justify-content:center;
+  font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:17px; color:#fff;
 }
 
-.brand-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-name {
-  font-weight: 700;
-  font-size: 16px;
-  color: #fff;
-  letter-spacing: -0.3px;
-}
-
-.brand-sub {
-  font-size: 11px;
-  color: var(--text-sidebar);
-  margin-top: 2px;
-}
+.sb-title { font-weight:700; font-size:15px; color:#fff; letter-spacing:-0.3px; }
+.sb-version { font-size:10px; color:var(--text-sidebar); margin-top:1px; }
 
 /* Sidebar balance */
-.sidebar-balance {
-  padding: 20px 24px;
-  border-bottom: 1px solid #2a2a40;
+.sb-bal {
+  padding:18px 20px; border-bottom:1px solid var(--sidebar-border);
 }
 
-.sidebar-balance-label {
-  font-size: 11px;
-  color: var(--text-sidebar);
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  font-weight: 500;
-  margin-bottom: 6px;
+.sb-bal-label {
+  font-size:10px; color:var(--text-sidebar);
+  text-transform:uppercase; letter-spacing:1.2px; font-weight:600; margin-bottom:5px;
 }
 
-.sidebar-balance-amount {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 22px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: -0.5px;
+.sb-bal-val {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:20px; font-weight:600; color:#fff; letter-spacing:-0.5px;
+}
+.sb-bal-unit { font-size:12px; color:var(--text-sidebar); font-weight:400; margin-left:3px; }
+
+.sb-bal-sub {
+  font-size:11px; color:var(--text-sidebar); margin-top:3px;
+  font-family:'IBM Plex Mono',monospace;
 }
 
-.sidebar-balance-unit {
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--text-sidebar);
-  margin-left: 4px;
-}
+/* Nav */
+.sb-nav { flex:1; padding:8px 0; overflow-y:auto; }
 
-.sidebar-balance-unlocked {
-  font-size: 12px;
-  color: var(--text-sidebar);
-  margin-top: 4px;
-  font-family: 'IBM Plex Mono', monospace;
+.sb-item {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 20px; color:var(--text-sidebar);
+  font-size:13px; font-weight:500; border:none;
+  background:none; width:100%; text-align:left;
+  border-left:3px solid transparent; transition:all 0.12s;
 }
+.sb-item:hover { background:var(--sidebar-hover); color:#ccc; }
+.sb-item.active { background:var(--sidebar-active); color:#fff; border-left-color:var(--accent); }
+.sb-item .ico { width:20px; text-align:center; font-size:15px; flex-shrink:0; }
 
-/* Sidebar nav */
-.sidebar-nav {
-  flex: 1;
-  padding: 12px 0;
-  overflow-y: auto;
-}
+.sb-div { height:1px; background:var(--sidebar-border); margin:6px 20px; }
 
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 24px;
-  color: var(--text-sidebar);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  border-left: 3px solid transparent;
-  background: none;
-  border-top: none;
-  border-bottom: none;
-  border-right: none;
-  width: 100%;
-  text-align: left;
-  font-family: 'IBM Plex Sans', sans-serif;
+/* Footer */
+.sb-foot {
+  padding:14px 20px; border-top:1px solid var(--sidebar-border);
+  display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-sidebar);
 }
-.nav-item:hover {
-  background: var(--bg-sidebar-hover);
-  color: #ddd;
+.sb-dot {
+  width:7px; height:7px; border-radius:50%; background:var(--text-muted); flex-shrink:0;
 }
-.nav-item.active {
-  background: var(--bg-sidebar-active);
-  color: var(--text-sidebar-active);
-  border-left-color: var(--accent);
-}
+.sb-dot.ok { background:var(--green); box-shadow:0 0 6px #00c48c50; }
+.sb-dot.err { background:var(--red); }
 
-.nav-icon {
-  width: 22px;
-  text-align: center;
-  font-size: 16px;
-  flex-shrink: 0;
-}
+/* ── Content ── */
+.content { flex:1; display:flex; flex-direction:column; overflow:hidden; }
 
-.nav-divider {
-  height: 1px;
-  background: #2a2a40;
-  margin: 8px 24px;
+.c-head {
+  background:var(--header); border-bottom:1px solid var(--border);
+  padding:18px 28px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
 }
+.c-title { font-size:20px; font-weight:700; letter-spacing:-0.4px; }
 
-/* Sidebar footer */
-.sidebar-footer {
-  padding: 16px 24px;
-  border-top: 1px solid #2a2a40;
-}
-
-.sync-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--text-sidebar);
-}
-
-.sync-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  flex-shrink: 0;
-}
-.sync-dot.connected { background: var(--success); box-shadow: 0 0 6px #2ecc7160; }
-.sync-dot.error { background: var(--danger); }
-
-/* ── Content Area ── */
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Content Header */
-.content-header {
-  background: var(--bg-header);
-  border-bottom: 1px solid var(--border);
-  padding: 20px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
-.page-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-dark);
-  letter-spacing: -0.5px;
-}
-
-.header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.header-btn {
-  padding: 8px 16px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: #fff;
-  color: var(--text-body);
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.header-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* Content Body */
-.content-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 28px 32px;
-}
+.c-body { flex:1; overflow-y:auto; padding:24px 28px; }
 
 /* ── Pages ── */
-.page { display: none; }
-.page.active { display: block; }
+.pg { display:none; animation: slideUp 0.3s ease; }
+.pg.on { display:block; }
 
-/* ── Account/Dashboard Page ── */
-.balance-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 28px;
-}
+/* ── Dashboard ── */
+.dash-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
 
-.stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  box-shadow: var(--shadow-card);
+.st {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:18px; box-shadow:var(--shadow);
 }
+.st-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; font-weight:500; margin-bottom:6px; }
+.st-val { font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; }
+.st-sub { font-size:11px; color:var(--text-muted); margin-top:3px; }
 
-.stat-card-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  font-weight: 500;
-  margin-bottom: 8px;
+/* Quick Actions */
+.quick-actions {
+  display:flex; gap:12px; margin-bottom:24px;
 }
+.qa-btn {
+  flex:1; padding:14px; border-radius:var(--r-lg);
+  border:1px solid var(--border); background:var(--card);
+  font-size:14px; font-weight:600; color:var(--text);
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:all 0.15s; box-shadow:var(--shadow);
+}
+.qa-btn:hover { border-color:var(--accent); color:var(--accent); transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+.qa-btn.primary { background:var(--accent); color:#fff; border-color:transparent; }
+.qa-btn.primary:hover { background:var(--accent-hover); box-shadow:0 4px 16px #7c5ce730; }
 
-.stat-card-value {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--text-dark);
-}
+/* ── Card / Table ── */
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden; }
+.card-head { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.card-title { font-size:14px; font-weight:600; }
+.card-badge { font-size:11px; background:var(--accent-bg); color:var(--accent); padding:3px 10px; border-radius:100px; font-weight:600; }
 
-.stat-card-sub {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
+table { width:100%; border-collapse:collapse; }
+th { text-align:left; padding:9px 18px; font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; background:#fafafc; border-bottom:1px solid var(--border); }
+td { padding:12px 18px; font-size:13px; border-bottom:1px solid #f2f2f6; vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:#fafafc; }
 
-/* ── Transaction History ── */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-}
+.dir { display:inline-flex; align-items:center; gap:7px; font-weight:500; }
+.dir-ico { width:26px; height:26px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:13px; }
+.dir-ico.i { background:var(--green-bg); color:var(--green); }
+.dir-ico.o { background:var(--red-bg); color:var(--red); }
+.dir-ico.m { background:var(--orange-bg); color:var(--orange); }
 
-.card-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+.addr { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.amt { font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; }
+.amt.pos { color:var(--green); }
+.amt.neg { color:var(--red); }
+.ts { font-size:11px; color:var(--text-muted); }
+.conf { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-muted); }
+.empty { text-align:center; padding:40px 20px; color:var(--text-muted); font-size:13px; }
 
-.card-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-dark);
+/* ── Form ── */
+.frm { max-width:540px; }
+.fg { margin-bottom:18px; }
+.fl { display:block; font-size:12px; font-weight:600; color:var(--text-body); margin-bottom:5px; }
+.fl-hint { font-weight:400; color:var(--text-muted); font-size:11px; margin-left:4px; }
+.fi {
+  width:100%; padding:11px 13px; background:var(--input-bg);
+  border:1px solid var(--input-border); border-radius:var(--r);
+  color:var(--text); font-family:'IBM Plex Mono',monospace; font-size:14px;
+  outline:none; transition:border 0.2s, box-shadow 0.2s;
 }
+.fi:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+.fi::placeholder { color:var(--text-light); font-family:'IBM Plex Sans',sans-serif; }
+.fi-lg { font-size:22px; font-weight:600; padding:15px; letter-spacing:-0.5px; }
+.fr { display:flex; gap:14px; }
+.fr > .fg { flex:1; }
+.fh { font-size:11px; color:var(--text-muted); margin-top:4px; }
 
-/* Table */
-.tx-table {
-  width: 100%;
-  border-collapse: collapse;
+.btn {
+  padding:13px 28px; background:var(--accent); border:none;
+  border-radius:var(--r); color:#fff; font-size:14px; font-weight:600;
+  transition:all 0.2s;
 }
+.btn:hover { background:var(--accent-hover); box-shadow:0 4px 12px #7c5ce730; }
+.btn:disabled { opacity:0.4; cursor:not-allowed; }
 
-.tx-table th {
-  text-align: left;
-  padding: 10px 20px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  background: #fafafc;
-  border-bottom: 1px solid var(--border);
-}
+.msg { padding:11px 15px; border-radius:var(--r); font-size:13px; margin-top:14px; display:none; }
+.msg.err { display:block; background:var(--red-bg); border:1px solid #ff475730; color:var(--red); }
+.msg.ok { display:block; background:var(--green-bg); border:1px solid #00c48c30; color:var(--green); }
 
-.tx-table td {
-  padding: 14px 20px;
-  font-size: 13px;
-  border-bottom: 1px solid #f0f0f4;
-  vertical-align: middle;
+/* ── Receive ── */
+.rcv { max-width:540px; }
+.rcv-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:28px; text-align:center; box-shadow:var(--shadow); }
+.qr { background:#fff; border:1px solid var(--border); border-radius:var(--r); padding:16px; display:inline-block; margin-bottom:16px; }
+.qr canvas { display:block; }
+.rcv-addr {
+  background:var(--input-bg); border:1px solid var(--input-border); border-radius:var(--r);
+  padding:13px 14px; font-family:'IBM Plex Mono',monospace; font-size:13px;
+  word-break:break-all; line-height:1.7; color:var(--accent); cursor:pointer;
+  text-align:center; transition:all 0.15s;
 }
+.rcv-addr:hover { border-color:var(--accent); background:var(--accent-bg); }
+.rcv-hint { font-size:11px; color:var(--text-muted); margin-top:10px; }
+.rcv-btn {
+  margin-top:14px; padding:9px 18px; background:var(--input-bg);
+  border:1px solid var(--input-border); border-radius:var(--r);
+  font-size:13px; font-weight:500; color:var(--text-body); transition:all 0.15s;
+}
+.rcv-btn:hover { border-color:var(--accent); color:var(--accent); }
 
-.tx-table tr:last-child td { border-bottom: none; }
+/* ── Network ── */
+.net-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:540px; }
+.net-st { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); padding:18px; box-shadow:var(--shadow); }
+.net-v { font-family:'IBM Plex Mono',monospace; font-size:18px; font-weight:600; margin-bottom:3px; }
+.net-l { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; }
 
-.tx-table tr:hover td { background: #fafafc; }
-
-.tx-direction {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-}
-
-.tx-dir-icon {
-  width: 28px; height: 28px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-.tx-dir-icon.in { background: #2ecc7118; color: var(--success); }
-.tx-dir-icon.out { background: #e74c3c18; color: var(--danger); }
-.tx-dir-icon.mine { background: #f39c1218; color: var(--warning); }
-
-.tx-addr {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-muted);
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tx-amount {
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 600;
-  font-size: 13px;
-}
-.tx-amount.positive { color: var(--success); }
-.tx-amount.negative { color: var(--danger); }
-
-.tx-time {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.tx-confs {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.empty-table {
-  text-align: center;
-  padding: 48px 20px;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-/* ── Send Page ── */
-.send-form {
-  max-width: 560px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-body);
-  margin-bottom: 6px;
-}
-
-.form-sublabel {
-  font-weight: 400;
-  color: var(--text-muted);
-  font-size: 12px;
-  margin-left: 4px;
-}
-
-.form-input {
-  width: 100%;
-  padding: 12px 14px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius);
-  color: var(--text-dark);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.form-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-dim);
-}
-.form-input::placeholder {
-  color: var(--text-muted);
-  font-family: 'IBM Plex Sans', sans-serif;
-}
-
-.form-input-lg {
-  font-size: 24px;
-  font-weight: 600;
-  padding: 16px;
-  letter-spacing: -0.5px;
-}
-
-.form-row {
-  display: flex;
-  gap: 16px;
-}
-.form-row .form-group { flex: 1; }
-
-.form-hint {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 6px;
-}
-
-.send-btn {
-  padding: 14px 32px;
-  background: var(--accent);
-  border: none;
-  border-radius: var(--radius);
-  color: #fff;
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.send-btn:hover {
-  background: var(--accent-light);
-  box-shadow: 0 4px 12px var(--accent-glow);
-}
-.send-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.alert {
-  padding: 12px 16px;
-  border-radius: var(--radius);
-  font-size: 13px;
-  margin-top: 16px;
-  display: none;
-}
-.alert.error { display: block; background: #e74c3c12; border: 1px solid #e74c3c30; color: var(--danger); }
-.alert.success { display: block; background: #2ecc7112; border: 1px solid #2ecc7130; color: var(--success); }
-
-/* ── Receive Page ── */
-.receive-container {
-  max-width: 560px;
-}
-
-.receive-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  text-align: center;
-  box-shadow: var(--shadow-card);
-}
-
-.qr-box {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  display: inline-block;
-  margin-bottom: 20px;
-}
-.qr-box canvas { display: block; }
-
-.receive-address {
-  background: var(--bg-input);
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  word-break: break-all;
-  line-height: 1.7;
-  color: var(--accent);
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-}
-.receive-address:hover {
-  border-color: var(--accent);
-  background: var(--accent-dim);
-}
-
-.receive-hint {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 12px;
-}
-
-.generate-btn {
-  margin-top: 16px;
-  padding: 10px 20px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius);
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-body);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.generate-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* ── Settings Page ── */
-.settings-form {
-  max-width: 560px;
-}
-
-.settings-section {
-  margin-bottom: 32px;
-}
-
-.settings-section-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-/* ── Network Page ── */
-.network-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  max-width: 560px;
-}
-
-.network-stat {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  box-shadow: var(--shadow-card);
-}
-
-.network-stat-value {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 4px;
-}
-
-.network-stat-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
+/* Settings sections */
+.set-sec { margin-bottom:28px; }
+.set-h { font-size:15px; font-weight:600; margin-bottom:14px; padding-bottom:7px; border-bottom:1px solid var(--border); }
 
 /* ── Toast ── */
 .toast {
-  position: fixed;
-  top: 24px;
-  left: 50%; transform: translateX(-50%);
-  background: var(--accent);
-  color: #fff;
-  padding: 10px 24px;
-  border-radius: 100px;
-  font-weight: 600;
-  font-size: 13px;
-  z-index: 999;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-  box-shadow: var(--shadow-elevated);
+  position:fixed; top:20px; left:50%; transform:translateX(-50%);
+  background:var(--accent); color:#fff; padding:10px 24px;
+  border-radius:100px; font-weight:600; font-size:13px;
+  z-index:999; opacity:0; transition:opacity 0.3s; pointer-events:none;
+  box-shadow:0 4px 16px #7c5ce740;
 }
-.toast.show { opacity: 1; }
+.toast.show { opacity:1; }
 
 /* ── Spinner ── */
-.spinner {
-  width: 18px; height: 18px;
-  border: 2px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+.spin { width:16px; height:16px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:sp 0.6s linear infinite; display:inline-block; vertical-align:middle; margin-right:6px; }
+@keyframes sp { to { transform:rotate(360deg) } }
 
 /* ── Mobile ── */
-.mobile-header {
-  display: none;
-  background: var(--bg-sidebar);
-  padding: 16px 20px;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #2a2a40;
+.mob-head { display:none; background:var(--sidebar); padding:14px 18px; align-items:center; justify-content:space-between; }
+.mob-head span { color:#fff; font-weight:700; font-size:16px; }
+.mob-head button { background:none; border:none; color:var(--text-sidebar); font-size:22px; }
+
+.mob-nav {
+  display:none; position:fixed; bottom:0; left:0; right:0;
+  background:var(--sidebar); border-top:1px solid var(--sidebar-border);
+  padding:4px 0; padding-bottom:max(4px,env(safe-area-inset-bottom)); z-index:100;
 }
-
-.mobile-header .brand-name { color: #fff; font-weight: 700; font-size: 18px; }
-
-.mobile-menu-btn {
-  background: none;
-  border: none;
-  color: var(--text-sidebar);
-  font-size: 24px;
-  cursor: pointer;
-  padding: 4px;
+.mob-nav-in { display:flex; }
+.mn {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:1px;
+  padding:6px 0; color:var(--text-sidebar); font-size:9px; font-weight:500;
+  background:none; border:none; font-family:inherit; transition:color 0.12s;
 }
+.mn .ico { font-size:18px; }
+.mn:hover, .mn.on { color:var(--accent); }
 
-.mobile-bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--bg-sidebar);
-  border-top: 1px solid #2a2a40;
-  padding: 6px 0;
-  padding-bottom: max(6px, env(safe-area-inset-bottom));
-  z-index: 100;
+@media(max-width:768px) {
+  .sidebar { display:none; }
+  .mob-head { display:flex; }
+  .mob-nav { display:block; }
+  .c-body { padding:18px 14px; padding-bottom:72px; }
+  .c-head { padding:14px; }
+  .dash-stats { grid-template-columns:1fr; }
+  .quick-actions { flex-direction:column; }
+  .fr { flex-direction:column; gap:0; }
+  .net-grid { grid-template-columns:1fr; }
+  .c-title { font-size:17px; }
+  th:nth-child(3), td:nth-child(3) { display:none; }
 }
-
-.mobile-bottom-nav-inner {
-  display: flex;
-}
-
-.mobile-nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 0;
-  color: var(--text-sidebar);
-  font-size: 10px;
-  font-weight: 500;
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-family: 'IBM Plex Sans', sans-serif;
-  transition: color 0.15s;
-}
-.mobile-nav-item .nav-icon { font-size: 20px; }
-.mobile-nav-item:hover, .mobile-nav-item.active { color: var(--accent-light); }
-
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .mobile-header { display: flex; }
-  .mobile-bottom-nav { display: block; }
-  .content-body { padding: 20px 16px; padding-bottom: 80px; }
-  .content-header { padding: 16px 16px; }
-  .balance-cards { grid-template-columns: 1fr; }
-  .form-row { flex-direction: column; gap: 0; }
-  .network-grid { grid-template-columns: 1fr; }
-  .page-title { font-size: 18px; }
-  .tx-table th:nth-child(3), .tx-table td:nth-child(3) { display: none; }
-}
-
-@media (max-width: 480px) {
-  .stat-card-value { font-size: 20px; }
-  .tx-table th:nth-child(4), .tx-table td:nth-child(4) { display: none; }
+@media(max-width:480px) {
+  th:nth-child(4), td:nth-child(4) { display:none; }
 }
 </style>
 </head>
 <body>
 
+<!-- ═══ Welcome Screen ═══ -->
+<div class="welcome" id="welcome">
+  <div class="welcome-content">
+    <div class="welcome-logo">S</div>
+    <h1>ShardWallet</h1>
+    <p>Connect to your ShardCoin node to manage your funds. Enter your RPC details below, or try the demo.</p>
+
+    <div class="welcome-form">
+      <label>RPC URL</label>
+      <input id="wUrl" placeholder="http://127.0.0.1:7332" value="http://127.0.0.1:7332">
+
+      <div class="row">
+        <div>
+          <label>Username</label>
+          <input id="wUser" placeholder="rpcuser">
+        </div>
+        <div>
+          <label>Password</label>
+          <input id="wPass" type="password" placeholder="rpcpassword">
+        </div>
+      </div>
+
+      <label>Wallet <span style="font-weight:400;opacity:0.5">(optional)</span></label>
+      <input id="wWallet" placeholder="default">
+
+      <button class="welcome-btn" onclick="connectFromWelcome()">Connect</button>
+      <button class="welcome-demo" onclick="startDemo()">Try Demo Mode</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ App ═══ -->
 <div class="app">
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-icon">S</div>
-      <div class="brand-text">
-        <div class="brand-name">ShardWallet</div>
-        <div class="brand-sub">ShardCoin Core</div>
+    <div class="sb-brand">
+      <div class="sb-logo">S</div>
+      <div>
+        <div class="sb-title">ShardWallet</div>
+        <div class="sb-version">ShardCoin Core</div>
       </div>
     </div>
-
-    <div class="sidebar-balance">
-      <div class="sidebar-balance-label">Balance</div>
-      <div class="sidebar-balance-amount" id="sidebarBalance">0.00<span class="sidebar-balance-unit">SHRD</span></div>
-      <div class="sidebar-balance-unlocked" id="sidebarUnlocked">Unlocked: 0.00 SHRD</div>
+    <div class="sb-bal">
+      <div class="sb-bal-label">Balance</div>
+      <div class="sb-bal-val" id="sBal">0.00<span class="sb-bal-unit">SHRD</span></div>
+      <div class="sb-bal-sub" id="sUnlock">Unlocked: 0.00 SHRD</div>
     </div>
-
-    <nav class="sidebar-nav">
-      <button class="nav-item active" data-page="account">
-        <span class="nav-icon">&#9632;</span> Account
-      </button>
-      <button class="nav-item" data-page="send">
-        <span class="nav-icon">&#8593;</span> Send
-      </button>
-      <button class="nav-item" data-page="receive">
-        <span class="nav-icon">&#8595;</span> Receive
-      </button>
-      <button class="nav-item" data-page="history">
-        <span class="nav-icon">&#9776;</span> Transactions
-      </button>
-      <div class="nav-divider"></div>
-      <button class="nav-item" data-page="network">
-        <span class="nav-icon">&#9673;</span> Advanced
-      </button>
-      <button class="nav-item" data-page="settings">
-        <span class="nav-icon">&#9881;</span> Settings
-      </button>
+    <nav class="sb-nav">
+      <button class="sb-item active" data-p="dash"><span class="ico">&#11035;</span> Account</button>
+      <button class="sb-item" data-p="send"><span class="ico">&#8593;</span> Send</button>
+      <button class="sb-item" data-p="recv"><span class="ico">&#8595;</span> Receive</button>
+      <button class="sb-item" data-p="hist"><span class="ico">&#9776;</span> Transactions</button>
+      <div class="sb-div"></div>
+      <button class="sb-item" data-p="net"><span class="ico">&#9673;</span> Advanced</button>
+      <button class="sb-item" data-p="set"><span class="ico">&#9881;</span> Settings</button>
     </nav>
-
-    <div class="sidebar-footer">
-      <div class="sync-status">
-        <div class="sync-dot" id="syncDot"></div>
-        <span id="syncText">Connecting...</span>
-      </div>
+    <div class="sb-foot">
+      <div class="sb-dot" id="sDot"></div>
+      <span id="sStatus">Connecting...</span>
     </div>
   </aside>
 
-  <!-- Main Content -->
   <main class="content">
-    <!-- Mobile Header -->
-    <div class="mobile-header">
-      <span class="brand-name">ShardWallet</span>
-      <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">&#9776;</button>
+    <div class="mob-head">
+      <span>ShardWallet</span>
+      <button onclick="toggleSb()">&#9776;</button>
     </div>
 
-    <!-- Content Header -->
-    <div class="content-header">
-      <h1 class="page-title" id="pageTitle">Account</h1>
-      <div class="header-actions" id="headerActions"></div>
+    <div class="c-head">
+      <h1 class="c-title" id="pTitle">Account</h1>
     </div>
 
-    <!-- Content Body -->
-    <div class="content-body">
+    <div class="c-body">
+      <!-- Dashboard -->
+      <div class="pg on" id="pg-dash">
+        <div class="dash-stats">
+          <div class="st"><div class="st-label">Total Balance</div><div class="st-val" id="dBal">0.00</div><div class="st-sub">SHRD</div></div>
+          <div class="st"><div class="st-label">Block Height</div><div class="st-val" id="dBlock">-</div><div class="st-sub" id="dChain">-</div></div>
+          <div class="st"><div class="st-label">Difficulty</div><div class="st-val" id="dDiff">-</div><div class="st-sub">Current</div></div>
+        </div>
 
-      <!-- Account Page -->
-      <div class="page active" id="page-account">
-        <div class="balance-cards">
-          <div class="stat-card">
-            <div class="stat-card-label">Total Balance</div>
-            <div class="stat-card-value" id="totalBalance">0.00</div>
-            <div class="stat-card-sub">SHRD</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Block Height</div>
-            <div class="stat-card-value" id="blockHeight">-</div>
-            <div class="stat-card-sub" id="chainName">-</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-card-label">Difficulty</div>
-            <div class="stat-card-value" id="difficulty">-</div>
-            <div class="stat-card-sub">Current</div>
-          </div>
+        <div class="quick-actions">
+          <button class="qa-btn primary" onclick="nav('send')">&#8593; Send SHRD</button>
+          <button class="qa-btn" onclick="nav('recv')">&#8595; Receive SHRD</button>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">Recent Transactions</span>
-          </div>
-          <table class="tx-table">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Address</th>
-                <th>Date</th>
-                <th>Conf.</th>
-              </tr>
-            </thead>
-            <tbody id="txTableBody">
-              <tr><td colspan="5" class="empty-table">No transactions yet</td></tr>
-            </tbody>
-          </table>
+          <div class="card-head"><span class="card-title">Recent Transactions</span><span class="card-badge" id="txCount">0</span></div>
+          <table><thead><tr><th>Type</th><th>Amount</th><th>Address</th><th>Date</th><th>Conf.</th></tr></thead><tbody id="tDash"><tr><td colspan="5" class="empty">No transactions yet</td></tr></tbody></table>
         </div>
       </div>
 
-      <!-- Send Page -->
-      <div class="page" id="page-send">
-        <div class="send-form">
-          <div class="card" style="padding: 28px;">
-            <div class="form-group">
-              <label class="form-label">Address <span class="form-sublabel">Recipient's ShardCoin address</span></label>
-              <input class="form-input" id="sendAddress" placeholder="shrd1q..." autocomplete="off" spellcheck="false">
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Amount</label>
-                <input class="form-input form-input-lg" id="sendAmount" type="number" step="0.00000001" min="0" placeholder="0.00">
-                <div class="form-hint">SHRD</div>
-              </div>
-            </div>
-
-            <div id="sendAlert"></div>
-
-            <button class="send-btn" id="sendBtn" onclick="sendCoins()">Send SHRD</button>
-          </div>
-        </div>
+      <!-- Send -->
+      <div class="pg" id="pg-send">
+        <div class="frm"><div class="card" style="padding:24px">
+          <div class="fg"><label class="fl">Address <span class="fl-hint">Recipient's ShardCoin address</span></label><input class="fi" id="fAddr" placeholder="shrd1q..." autocomplete="off" spellcheck="false"></div>
+          <div class="fr"><div class="fg"><label class="fl">Amount</label><input class="fi fi-lg" id="fAmt" type="number" step="0.00000001" min="0" placeholder="0.00"><div class="fh">SHRD</div></div></div>
+          <div id="fMsg"></div>
+          <button class="btn" id="fBtn" onclick="doSend()" style="width:100%;margin-top:8px">Send SHRD</button>
+        </div></div>
       </div>
 
-      <!-- Receive Page -->
-      <div class="page" id="page-receive">
-        <div class="receive-container">
-          <div class="receive-card">
-            <div class="qr-box" id="qrCode"></div>
-            <div class="receive-address" id="receiveAddr" onclick="copyAddr()">Generating address...</div>
-            <div class="receive-hint">Click address to copy to clipboard</div>
-            <button class="generate-btn" onclick="genAddr()">Generate New Address</button>
-          </div>
-        </div>
+      <!-- Receive -->
+      <div class="pg" id="pg-recv">
+        <div class="rcv"><div class="rcv-card">
+          <div class="qr" id="qr"></div>
+          <div class="rcv-addr" id="rAddr" onclick="cpAddr()">Generating address...</div>
+          <div class="rcv-hint">Click address to copy</div>
+          <button class="rcv-btn" onclick="genAddr()">Generate New Address</button>
+        </div></div>
       </div>
 
-      <!-- History Page -->
-      <div class="page" id="page-history">
+      <!-- History -->
+      <div class="pg" id="pg-hist">
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">All Transactions</span>
-          </div>
-          <table class="tx-table">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Address</th>
-                <th>Date</th>
-                <th>Confirmations</th>
-              </tr>
-            </thead>
-            <tbody id="historyTableBody">
-              <tr><td colspan="5" class="empty-table">No transactions yet</td></tr>
-            </tbody>
-          </table>
+          <div class="card-head"><span class="card-title">All Transactions</span></div>
+          <table><thead><tr><th>Type</th><th>Amount</th><th>Address</th><th>Date</th><th>Confirmations</th></tr></thead><tbody id="tHist"><tr><td colspan="5" class="empty">No transactions yet</td></tr></tbody></table>
         </div>
       </div>
 
-      <!-- Network/Advanced Page -->
-      <div class="page" id="page-network">
-        <div class="network-grid">
-          <div class="network-stat">
-            <div class="network-stat-value" id="netBlocks">-</div>
-            <div class="network-stat-label">Block Height</div>
-          </div>
-          <div class="network-stat">
-            <div class="network-stat-value" id="netDiff">-</div>
-            <div class="network-stat-label">Difficulty</div>
-          </div>
-          <div class="network-stat">
-            <div class="network-stat-value" id="netChain">-</div>
-            <div class="network-stat-label">Network</div>
-          </div>
-          <div class="network-stat">
-            <div class="network-stat-value" id="netSize">-</div>
-            <div class="network-stat-label">Blockchain Size</div>
-          </div>
-          <div class="network-stat">
-            <div class="network-stat-value" id="netVerification">-</div>
-            <div class="network-stat-label">Verification</div>
-          </div>
-          <div class="network-stat">
-            <div class="network-stat-value" id="netPruned">-</div>
-            <div class="network-stat-label">Pruned</div>
-          </div>
+      <!-- Network -->
+      <div class="pg" id="pg-net">
+        <div class="net-grid">
+          <div class="net-st"><div class="net-v" id="nBlock">-</div><div class="net-l">Block Height</div></div>
+          <div class="net-st"><div class="net-v" id="nDiff">-</div><div class="net-l">Difficulty</div></div>
+          <div class="net-st"><div class="net-v" id="nChain">-</div><div class="net-l">Network</div></div>
+          <div class="net-st"><div class="net-v" id="nSize">-</div><div class="net-l">Blockchain Size</div></div>
+          <div class="net-st"><div class="net-v" id="nVer">-</div><div class="net-l">Verification</div></div>
+          <div class="net-st"><div class="net-v" id="nPrune">-</div><div class="net-l">Pruned</div></div>
         </div>
       </div>
 
-      <!-- Settings Page -->
-      <div class="page" id="page-settings">
-        <div class="settings-form">
-          <div class="card" style="padding: 28px;">
-            <div class="settings-section">
-              <div class="settings-section-title">Node Connection</div>
-              <div class="form-group">
-                <label class="form-label">RPC URL</label>
-                <input class="form-input" id="setUrl" placeholder="http://127.0.0.1:7332">
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">Username</label>
-                  <input class="form-input" id="setUser" placeholder="rpcuser">
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Password</label>
-                  <input class="form-input" id="setPass" type="password" placeholder="rpcpassword">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Wallet Name <span class="form-sublabel">(optional)</span></label>
-                <input class="form-input" id="setWallet" placeholder="default">
-              </div>
-            </div>
-            <button class="send-btn" onclick="saveSettings()">Save &amp; Connect</button>
+      <!-- Settings -->
+      <div class="pg" id="pg-set">
+        <div class="frm"><div class="card" style="padding:24px">
+          <div class="set-sec"><div class="set-h">Node Connection</div>
+            <div class="fg"><label class="fl">RPC URL</label><input class="fi" id="sUrl"></div>
+            <div class="fr"><div class="fg"><label class="fl">Username</label><input class="fi" id="sUser"></div><div class="fg"><label class="fl">Password</label><input class="fi" id="sPass" type="password"></div></div>
+            <div class="fg"><label class="fl">Wallet Name <span class="fl-hint">(optional)</span></label><input class="fi" id="sWal"></div>
           </div>
-        </div>
+          <button class="btn" onclick="saveCfg()" style="width:100%">Save &amp; Connect</button>
+          <button class="rcv-btn" onclick="showWelcome()" style="width:100%;margin-top:10px;text-align:center">Back to Welcome Screen</button>
+        </div></div>
       </div>
-
     </div>
   </main>
 </div>
 
-<!-- Mobile Bottom Nav -->
-<nav class="mobile-bottom-nav">
-  <div class="mobile-bottom-nav-inner">
-    <button class="mobile-nav-item active" data-page="account">
-      <span class="nav-icon">&#9632;</span> Account
-    </button>
-    <button class="mobile-nav-item" data-page="send">
-      <span class="nav-icon">&#8593;</span> Send
-    </button>
-    <button class="mobile-nav-item" data-page="receive">
-      <span class="nav-icon">&#8595;</span> Receive
-    </button>
-    <button class="mobile-nav-item" data-page="history">
-      <span class="nav-icon">&#9776;</span> History
-    </button>
-    <button class="mobile-nav-item" data-page="settings">
-      <span class="nav-icon">&#9881;</span> Settings
-    </button>
+<!-- Mobile Nav -->
+<nav class="mob-nav">
+  <div class="mob-nav-in">
+    <button class="mn on" data-p="dash"><span class="ico">&#11035;</span>Account</button>
+    <button class="mn" data-p="send"><span class="ico">&#8593;</span>Send</button>
+    <button class="mn" data-p="recv"><span class="ico">&#8595;</span>Receive</button>
+    <button class="mn" data-p="hist"><span class="ico">&#9776;</span>History</button>
+    <button class="mn" data-p="set"><span class="ico">&#9881;</span>Settings</button>
   </div>
 </nav>
 
-<!-- Toast -->
-<div class="toast" id="toast">Copied to clipboard</div>
+<div class="toast" id="toast"></div>
 
-<!-- QR Library -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
 <script>
-// ── Config ──
-let cfg = JSON.parse(localStorage.getItem('shardwallet_config') || '{}');
-if (!cfg.rpcUrl) cfg = { rpcUrl: 'http://127.0.0.1:7332', rpcUser: '', rpcPass: '', wallet: '' };
+// ── State ──
+let cfg = JSON.parse(localStorage.getItem('sw_cfg') || 'null') || { rpcUrl:'http://127.0.0.1:7332', rpcUser:'', rpcPass:'', wallet:'' };
+let demo = false;
+let connected = false;
+
+// ── Welcome ──
+const hasConfig = localStorage.getItem('sw_cfg');
+if (hasConfig) document.getElementById('welcome').classList.add('hidden');
+
+function showWelcome() {
+  document.getElementById('welcome').classList.remove('hidden');
+}
+
+function connectFromWelcome() {
+  cfg.rpcUrl = document.getElementById('wUrl').value.trim() || 'http://127.0.0.1:7332';
+  cfg.rpcUser = document.getElementById('wUser').value.trim();
+  cfg.rpcPass = document.getElementById('wPass').value.trim();
+  cfg.wallet = document.getElementById('wWallet').value.trim();
+  localStorage.setItem('sw_cfg', JSON.stringify(cfg));
+  demo = false;
+  document.getElementById('welcome').classList.add('hidden');
+  refresh();
+}
+
+function startDemo() {
+  demo = true;
+  document.getElementById('welcome').classList.add('hidden');
+  loadDemo();
+}
+
+// ── Demo Data ──
+function loadDemo() {
+  const bal = '142.58';
+  setSidebar(bal, bal, 'regtest', 1247);
+  document.getElementById('dBal').textContent = bal;
+  document.getElementById('dBlock').textContent = '1,247';
+  document.getElementById('dChain').textContent = 'regtest';
+  document.getElementById('dDiff').textContent = '4.66e-10';
+  setNet({ blocks:1247, difficulty:4.656e-10, chain:'regtest', size_on_disk:52840, verificationprogress:1, pruned:false });
+  document.getElementById('sDot').className = 'sb-dot ok';
+  document.getElementById('sStatus').textContent = 'regtest · demo mode';
+
+  const txs = [
+    { category:'generate', amount:5, address:'', time:Date.now()/1000-120, confirmations:101 },
+    { category:'receive', amount:25.5, address:'shrd1qm6cslgspv0dgmkjdxdaywq29s7khultr2ep98x', time:Date.now()/1000-3600, confirmations:87 },
+    { category:'send', amount:-10.25, address:'shrd1qexhug0k7upya4z0s74zryt6khy8kf7d83gnj7h', time:Date.now()/1000-7200, confirmations:64 },
+    { category:'generate', amount:5, address:'', time:Date.now()/1000-14400, confirmations:200 },
+    { category:'receive', amount:100, address:'shrd1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx', time:Date.now()/1000-86400, confirmations:512 },
+    { category:'send', amount:-2.33, address:'shrd1qm6cslgspv0dgmkjdxdaywq29s7khultr2ep98x', time:Date.now()/1000-172800, confirmations:890 },
+    { category:'generate', amount:5, address:'', time:Date.now()/1000-259200, confirmations:1100 },
+  ];
+  renderTx(txs, 'tDash', 5);
+  renderTx(txs, 'tHist', 50);
+  document.getElementById('txCount').textContent = txs.length;
+}
 
 // ── RPC ──
 async function rpc(method, params = []) {
+  if (demo) throw new Error('Demo mode');
   const url = cfg.wallet ? `${cfg.rpcUrl}/wallet/${cfg.wallet}` : cfg.rpcUrl;
-  const headers = { 'Content-Type': 'application/json' };
-  if (cfg.rpcUser) headers['Authorization'] = 'Basic ' + btoa(cfg.rpcUser + ':' + cfg.rpcPass);
-  const res = await fetch(url, {
-    method: 'POST', headers,
-    body: JSON.stringify({ jsonrpc: '1.0', id: Date.now(), method, params })
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return data.result;
+  const h = { 'Content-Type': 'application/json' };
+  if (cfg.rpcUser) h['Authorization'] = 'Basic ' + btoa(cfg.rpcUser + ':' + cfg.rpcPass);
+  const r = await fetch(url, { method:'POST', headers:h, body:JSON.stringify({ jsonrpc:'1.0', id:Date.now(), method, params }) });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  return d.result;
 }
 
 // ── Formatting ──
-function fmtAmt(n) {
-  if (n == null) return '0.00';
-  const v = parseFloat(n);
-  return v === Math.floor(v) && Math.abs(v) < 1000 ? v.toFixed(2) : v.toFixed(8).replace(/0+$/, '').replace(/\.$/, '.00');
+function fa(n) { if(n==null) return '0.00'; const v=parseFloat(n); return v===Math.floor(v)&&Math.abs(v)<1e4 ? v.toFixed(2) : v.toFixed(8).replace(/0+$/,'').replace(/\.$/,'.00'); }
+function ft(ts) { if(!ts) return '-'; const d=new Date(ts*1000); const now=Date.now()/1000; const diff=now-ts; if(diff<60) return 'Just now'; if(diff<3600) return Math.floor(diff/60)+'m ago'; if(diff<86400) return Math.floor(diff/3600)+'h ago'; return d.toLocaleDateString(); }
+function fb(b) { if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(1)+' KB'; if(b<1073741824) return (b/1048576).toFixed(1)+' MB'; return (b/1073741824).toFixed(2)+' GB'; }
+
+// ── UI Helpers ──
+function setSidebar(bal, unlocked, chain, blocks) {
+  document.getElementById('sBal').innerHTML = fa(bal) + '<span class="sb-bal-unit">SHRD</span>';
+  document.getElementById('sUnlock').textContent = 'Unlocked: ' + fa(unlocked) + ' SHRD';
 }
 
-function fmtTime(ts) {
-  if (!ts) return '-';
-  const d = new Date(ts * 1000);
-  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
-function fmtBytes(b) {
-  if (b < 1024) return b + ' B';
-  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
-  if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB';
-  return (b / 1073741824).toFixed(2) + ' GB';
+function setNet(info) {
+  document.getElementById('nBlock').textContent = info.blocks.toLocaleString();
+  document.getElementById('nDiff').textContent = parseFloat(info.difficulty).toExponential(2);
+  document.getElementById('nChain').textContent = info.chain;
+  document.getElementById('nSize').textContent = fb(info.size_on_disk||0);
+  document.getElementById('nVer').textContent = (info.verificationprogress*100).toFixed(2)+'%';
+  document.getElementById('nPrune').textContent = info.pruned ? 'Yes' : 'No';
 }
 
 // ── Navigation ──
-function navigate(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll(`[data-page="${page}"]`).forEach(n => n.classList.add('active'));
-
-  const titles = { account: 'Account', send: 'Send', receive: 'Receive', history: 'Transactions', network: 'Advanced', settings: 'Settings' };
-  document.getElementById('pageTitle').textContent = titles[page] || page;
-
-  if (page === 'receive') genAddr();
-  if (page === 'settings') loadSettings();
+function nav(p) {
+  document.querySelectorAll('.pg').forEach(e => e.classList.remove('on'));
+  document.querySelectorAll('.sb-item,.mn').forEach(e => e.classList.remove('active','on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  document.querySelectorAll(`[data-p="${p}"]`).forEach(e => { e.classList.add('active'); e.classList.add('on'); });
+  const t = { dash:'Account', send:'Send', recv:'Receive', hist:'Transactions', net:'Advanced', set:'Settings' };
+  document.getElementById('pTitle').textContent = t[p] || p;
+  if (p === 'recv') genAddr();
+  if (p === 'set') loadCfg();
 }
-
-document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(btn => {
-  btn.addEventListener('click', () => navigate(btn.dataset.page));
-});
+document.querySelectorAll('.sb-item,.mn').forEach(b => b.addEventListener('click', () => nav(b.dataset.p)));
 
 // ── Refresh ──
 async function refresh() {
+  if (demo) return;
   try {
     const bal = await rpc('getbalance');
     const info = await rpc('getblockchaininfo');
-
-    // Sidebar
-    document.getElementById('sidebarBalance').innerHTML = fmtAmt(bal) + '<span class="sidebar-balance-unit">SHRD</span>';
-    document.getElementById('sidebarUnlocked').textContent = 'Unlocked: ' + fmtAmt(bal) + ' SHRD';
-
-    // Dashboard cards
-    document.getElementById('totalBalance').textContent = fmtAmt(bal);
-    document.getElementById('blockHeight').textContent = info.blocks.toLocaleString();
-    document.getElementById('chainName').textContent = info.chain;
-    document.getElementById('difficulty').textContent = parseFloat(info.difficulty).toExponential(2);
-
-    // Network page
-    document.getElementById('netBlocks').textContent = info.blocks.toLocaleString();
-    document.getElementById('netDiff').textContent = parseFloat(info.difficulty).toExponential(2);
-    document.getElementById('netChain').textContent = info.chain;
-    document.getElementById('netSize').textContent = fmtBytes(info.size_on_disk || 0);
-    document.getElementById('netVerification').textContent = (info.verificationprogress * 100).toFixed(2) + '%';
-    document.getElementById('netPruned').textContent = info.pruned ? 'Yes' : 'No';
-
-    // Status
-    document.getElementById('syncDot').className = 'sync-dot connected';
-    document.getElementById('syncText').textContent = info.chain + ' · block ' + info.blocks.toLocaleString();
-
-    // Transactions
+    connected = true;
+    setSidebar(bal, bal, info.chain, info.blocks);
+    document.getElementById('dBal').textContent = fa(bal);
+    document.getElementById('dBlock').textContent = info.blocks.toLocaleString();
+    document.getElementById('dChain').textContent = info.chain;
+    document.getElementById('dDiff').textContent = parseFloat(info.difficulty).toExponential(2);
+    setNet(info);
+    document.getElementById('sDot').className = 'sb-dot ok';
+    document.getElementById('sStatus').textContent = info.chain + ' · block ' + info.blocks.toLocaleString();
     try {
       const txs = await rpc('listtransactions', ['*', 50, 0, true]);
-      renderTx(txs.reverse(), 'txTableBody', 10);
-      renderTx(txs, 'historyTableBody', 50);
-    } catch (e) {}
-  } catch (e) {
-    document.getElementById('syncDot').className = 'sync-dot error';
-    document.getElementById('syncText').textContent = 'Disconnected';
+      const sorted = txs.reverse();
+      renderTx(sorted, 'tDash', 5);
+      renderTx(sorted, 'tHist', 50);
+      document.getElementById('txCount').textContent = txs.length;
+    } catch(e) {}
+  } catch(e) {
+    connected = false;
+    document.getElementById('sDot').className = 'sb-dot err';
+    document.getElementById('sStatus').textContent = 'Disconnected';
+    if (!hasConfig) showWelcome();
   }
 }
 
-function renderTx(txs, tableId, limit) {
-  const tbody = document.getElementById(tableId);
-  if (!txs || !txs.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty-table">No transactions yet</td></tr>';
-    return;
-  }
-  tbody.innerHTML = txs.slice(0, limit).map(tx => {
-    const isIn = tx.category === 'receive' || tx.category === 'generate' || tx.category === 'immature';
-    const isMine = tx.category === 'generate' || tx.category === 'immature';
-    const cls = isMine ? 'mine' : (isIn ? 'in' : 'out');
-    const icon = isMine ? '&#9670;' : (isIn ? '&#8595;' : '&#8593;');
-    const label = isMine ? 'Mined' : (isIn ? 'Received' : 'Sent');
-    const sign = isIn ? '+' : '-';
-    const amtCls = isIn ? 'positive' : 'negative';
-    return `<tr>
-      <td><span class="tx-direction"><span class="tx-dir-icon ${cls}">${icon}</span> ${label}</span></td>
-      <td><span class="tx-amount ${amtCls}">${sign}${fmtAmt(Math.abs(tx.amount))}</span></td>
-      <td><span class="tx-addr">${tx.address || 'coinbase'}</span></td>
-      <td><span class="tx-time">${fmtTime(tx.time)}</span></td>
-      <td><span class="tx-confs">${tx.confirmations || 0}</span></td>
-    </tr>`;
+function renderTx(txs, id, lim) {
+  const tb = document.getElementById(id);
+  if (!txs || !txs.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">No transactions yet</td></tr>'; return; }
+  tb.innerHTML = txs.slice(0,lim).map(tx => {
+    const isIn = tx.category==='receive'||tx.category==='generate'||tx.category==='immature';
+    const isM = tx.category==='generate'||tx.category==='immature';
+    const c = isM?'m':(isIn?'i':'o');
+    const ico = isM?'&#9670;':(isIn?'&#8595;':'&#8593;');
+    const lbl = isM?'Mined':(isIn?'Received':'Sent');
+    return `<tr><td><span class="dir"><span class="dir-ico ${c}">${ico}</span>${lbl}</span></td><td><span class="amt ${isIn?'pos':'neg'}">${isIn?'+':'-'}${fa(Math.abs(tx.amount))}</span></td><td><span class="addr">${tx.address||'coinbase'}</span></td><td><span class="ts">${ft(tx.time)}</span></td><td><span class="conf">${tx.confirmations||0}</span></td></tr>`;
   }).join('');
 }
 
 // ── Send ──
-async function sendCoins() {
-  const addr = document.getElementById('sendAddress').value.trim();
-  const amt = parseFloat(document.getElementById('sendAmount').value);
-  const alertEl = document.getElementById('sendAlert');
-  const btn = document.getElementById('sendBtn');
-  alertEl.innerHTML = ''; alertEl.className = '';
-
-  if (!addr) { alertEl.innerHTML = 'Enter a recipient address'; alertEl.className = 'alert error'; return; }
-  if (!amt || amt <= 0) { alertEl.innerHTML = 'Enter a valid amount'; alertEl.className = 'alert error'; return; }
-
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Sending...';
+async function doSend() {
+  const addr = document.getElementById('fAddr').value.trim();
+  const amt = parseFloat(document.getElementById('fAmt').value);
+  const msg = document.getElementById('fMsg');
+  const btn = document.getElementById('fBtn');
+  msg.innerHTML=''; msg.className='';
+  if (!addr) { msg.innerHTML='Enter a recipient address'; msg.className='msg err'; return; }
+  if (!amt||amt<=0) { msg.innerHTML='Enter a valid amount'; msg.className='msg err'; return; }
+  if (demo) { msg.innerHTML='Cannot send in demo mode'; msg.className='msg err'; return; }
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>Sending...';
   try {
     const txid = await rpc('sendtoaddress', [addr, amt]);
-    alertEl.innerHTML = 'Sent! TXID: <span style="font-family:IBM Plex Mono,monospace;font-size:12px">' + txid.substring(0, 24) + '...</span>';
-    alertEl.className = 'alert success';
-    document.getElementById('sendAddress').value = '';
-    document.getElementById('sendAmount').value = '';
+    msg.innerHTML='Sent! TX: <span style="font-family:IBM Plex Mono,monospace;font-size:11px">'+txid.substring(0,24)+'...</span>';
+    msg.className='msg ok';
+    document.getElementById('fAddr').value=''; document.getElementById('fAmt').value='';
     refresh();
-  } catch (e) {
-    alertEl.innerHTML = e.message;
-    alertEl.className = 'alert error';
-  }
-  btn.disabled = false; btn.textContent = 'Send SHRD';
+  } catch(e) { msg.innerHTML=e.message; msg.className='msg err'; }
+  btn.disabled=false; btn.textContent='Send SHRD';
 }
 
 // ── Receive ──
 async function genAddr() {
+  if (demo) {
+    const fakeAddr = 'shrd1q' + Array.from({length:38}, () => '0123456789abcdef'[Math.random()*16|0]).join('');
+    document.getElementById('rAddr').textContent = fakeAddr;
+    const c = document.getElementById('qr'); c.innerHTML='';
+    const cv = document.createElement('canvas'); c.appendChild(cv);
+    QRCode.toCanvas(cv, fakeAddr, { width:180, margin:2, color:{ dark:'#16162a', light:'#fff' } });
+    return;
+  }
   try {
     const addr = await rpc('getnewaddress');
-    document.getElementById('receiveAddr').textContent = addr;
-    const container = document.getElementById('qrCode');
-    container.innerHTML = '';
-    const canvas = document.createElement('canvas');
-    container.appendChild(canvas);
-    QRCode.toCanvas(canvas, addr, { width: 200, margin: 2, color: { dark: '#1e1e2e', light: '#ffffff' } });
-  } catch (e) {
-    document.getElementById('receiveAddr').textContent = 'Connect to node first';
-    document.getElementById('qrCode').innerHTML = '';
+    document.getElementById('rAddr').textContent = addr;
+    const c = document.getElementById('qr'); c.innerHTML='';
+    const cv = document.createElement('canvas'); c.appendChild(cv);
+    QRCode.toCanvas(cv, addr, { width:180, margin:2, color:{ dark:'#16162a', light:'#fff' } });
+  } catch(e) { document.getElementById('rAddr').textContent='Connect to node first'; document.getElementById('qr').innerHTML=''; }
+}
+
+function cpAddr() {
+  const a = document.getElementById('rAddr').textContent;
+  if (a && !a.includes('Connect') && !a.includes('Generating')) {
+    navigator.clipboard.writeText(a);
+    toast('Address copied to clipboard');
   }
 }
 
-function copyAddr() {
-  const addr = document.getElementById('receiveAddr').textContent;
-  if (addr && !addr.includes('Connect') && !addr.includes('Generating')) {
-    navigator.clipboard.writeText(addr);
-    showToast('Address copied to clipboard');
-  }
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show';
-  setTimeout(() => t.className = 'toast', 2000);
-}
+function toast(m) { const t=document.getElementById('toast'); t.textContent=m; t.className='toast show'; setTimeout(()=>t.className='toast',2000); }
 
 // ── Settings ──
-function loadSettings() {
-  document.getElementById('setUrl').value = cfg.rpcUrl;
-  document.getElementById('setUser').value = cfg.rpcUser;
-  document.getElementById('setPass').value = cfg.rpcPass;
-  document.getElementById('setWallet').value = cfg.wallet;
+function loadCfg() { document.getElementById('sUrl').value=cfg.rpcUrl; document.getElementById('sUser').value=cfg.rpcUser; document.getElementById('sPass').value=cfg.rpcPass; document.getElementById('sWal').value=cfg.wallet; }
+function saveCfg() {
+  cfg.rpcUrl=document.getElementById('sUrl').value.trim()||'http://127.0.0.1:7332';
+  cfg.rpcUser=document.getElementById('sUser').value.trim();
+  cfg.rpcPass=document.getElementById('sPass').value.trim();
+  cfg.wallet=document.getElementById('sWal').value.trim();
+  localStorage.setItem('sw_cfg', JSON.stringify(cfg));
+  demo=false; toast('Settings saved'); nav('dash'); refresh();
 }
 
-function saveSettings() {
-  cfg.rpcUrl = document.getElementById('setUrl').value.trim() || 'http://127.0.0.1:7332';
-  cfg.rpcUser = document.getElementById('setUser').value.trim();
-  cfg.rpcPass = document.getElementById('setPass').value.trim();
-  cfg.wallet = document.getElementById('setWallet').value.trim();
-  localStorage.setItem('shardwallet_config', JSON.stringify(cfg));
-  showToast('Settings saved');
-  navigate('account');
-  refresh();
-}
-
-// ── Mobile sidebar toggle ──
-function toggleMobileSidebar() {
-  const s = document.getElementById('sidebar');
-  s.style.display = s.style.display === 'flex' ? 'none' : 'flex';
-  s.style.position = 'fixed';
-  s.style.zIndex = '200';
-  s.style.height = '100vh';
-}
+// ── Mobile sidebar ──
+function toggleSb() { const s=document.getElementById('sidebar'); if(s.style.display==='flex'){s.style.display='none'}else{s.style.display='flex';s.style.position='fixed';s.style.zIndex='200';s.style.height='100vh';} }
 
 // ── Init ──
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
