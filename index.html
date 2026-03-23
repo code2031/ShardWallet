@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#00e5a0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>ShardWallet</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #07070c;
+  --bg-secondary: #0e0e18;
+  --bg-card: #12121f;
+  --bg-card-hover: #181830;
+  --bg-input: #0c0c16;
+  --accent: #00e5a0;
+  --accent-dim: #00e5a020;
+  --accent-glow: #00e5a040;
+  --accent-secondary: #6c5ce7;
+  --text-primary: #e8e8f0;
+  --text-secondary: #6b6b8d;
+  --text-muted: #3d3d5c;
+  --border: #1a1a2e;
+  --border-active: #2a2a4e;
+  --danger: #ff4757;
+  --success: #00e5a0;
+  --warning: #ffa502;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Outfit', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── Ambient background ── */
+body::before {
+  content: '';
+  position: fixed;
+  top: -40%; left: -20%;
+  width: 80%; height: 80%;
+  background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -30%; right: -20%;
+  width: 60%; height: 60%;
+  background: radial-gradient(ellipse, #6c5ce710 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── App Shell ── */
+#app {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 0 0 100px 0;
+}
+
+/* ── Header ── */
+.header {
+  padding: 24px 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+}
+
+.logo-mark {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--bg-primary);
+}
+
+.settings-btn {
+  width: 40px; height: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.settings-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-active);
+}
+
+/* ── Status Bar ── */
+.status-bar {
+  margin: 16px 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.3s;
+}
+.status-dot.connected { background: var(--success); box-shadow: 0 0 8px var(--accent-glow); }
+.status-dot.error { background: var(--danger); }
+
+.status-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── Balance Card ── */
+.balance-card {
+  margin: 24px 20px 0;
+  padding: 32px 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+.balance-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.5;
+}
+
+.balance-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.balance-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--text-primary) 40%, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.balance-unit {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  opacity: 0.5;
+  margin-left: 4px;
+}
+
+.balance-sub {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Action Buttons ── */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 20px 0;
+}
+
+.action-btn {
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+.action-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-active);
+  transform: translateY(-1px);
+}
+.action-btn.primary {
+  background: linear-gradient(135deg, var(--accent), #00c98a);
+  border-color: transparent;
+  color: var(--bg-primary);
+}
+.action-btn.primary:hover {
+  box-shadow: 0 4px 24px var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.action-icon {
+  font-size: 20px;
+}
+
+/* ── Section ── */
+.section {
+  margin: 28px 20px 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* ── Transaction List ── */
+.tx-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tx-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tx-item:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-active);
+}
+
+.tx-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.tx-icon.received {
+  background: #00e5a015;
+  color: var(--accent);
+}
+.tx-icon.sent {
+  background: #ff475715;
+  color: var(--danger);
+}
+.tx-icon.generate {
+  background: #ffa50215;
+  color: var(--warning);
+}
+
+.tx-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tx-label {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.tx-address {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tx-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: right;
+  white-space: nowrap;
+}
+.tx-amount.positive { color: var(--accent); }
+.tx-amount.negative { color: var(--danger); }
+
+.tx-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 2px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ── Bottom Nav ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.bottom-nav-inner {
+  display: flex;
+  max-width: 480px;
+  width: 100%;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--accent);
+}
+.nav-icon { font-size: 22px; }
+
+/* ── Modal / Panels ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: #00000080;
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px 24px;
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--text-muted);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
+}
+
+/* ── Form ── */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-input.amount-input {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  padding: 20px;
+  letter-spacing: -1px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--accent), #00c98a);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--bg-primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+.submit-btn:hover {
+  box-shadow: 0 4px 24px var(--accent-glow);
+  transform: translateY(-1px);
+}
+.submit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Receive Panel ── */
+.qr-container {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.qr-container canvas, .qr-container img {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.address-display {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  word-break: break-all;
+  line-height: 1.6;
+  color: var(--accent);
+  cursor: pointer;
+  transition: border-color 0.2s;
+  text-align: center;
+}
+.address-display:hover {
+  border-color: var(--accent);
+}
+
+.copy-toast {
+  position: fixed;
+  top: 40px;
+  left: 50%; transform: translateX(-50%);
+  background: var(--accent);
+  color: var(--bg-primary);
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.copy-toast.show { opacity: 1; }
+
+/* ── Settings Panel ── */
+.settings-group {
+  margin-bottom: 20px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-key {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.settings-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+/* ── Network Info ── */
+.net-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.net-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.net-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.net-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* ── Loading ── */
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--text-muted);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin: 0 auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (min-width: 600px) {
+  #app { padding-top: 20px; }
+  .bottom-nav { border-radius: var(--radius) var(--radius) 0 0; max-width: 480px; left: 50%; transform: translateX(-50%); }
+  .modal { border-radius: var(--radius); margin-bottom: 20px; }
+}
+
+/* ── Error ── */
+.error-msg {
+  background: #ff475715;
+  border: 1px solid #ff475730;
+  border-radius: var(--radius-xs);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--danger);
+  margin-top: 10px;
+  display: none;
+}
+.error-msg.show { display: block; }
+
+.success-msg {
+  background: #00e5a015;
+  border: 1px solid #00e5a030;
+  border-radius: var(--radius-xs);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--accent);
+  margin-top: 10px;
+  display: none;
+}
+.success-msg.show { display: block; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-mark">S</div>
+      <span>ShardWallet</span>
+    </div>
+    <button class="settings-btn" onclick="openModal('settings')">&#9881;</button>
+  </div>
+
+  <!-- Status -->
+  <div class="status-bar">
+    <div class="status-dot" id="statusDot"></div>
+    <span class="status-text" id="statusText">Connecting...</span>
+  </div>
+
+  <!-- Balance -->
+  <div class="balance-card">
+    <div class="balance-label">Total Balance</div>
+    <div class="balance-amount" id="balance">0.00<span class="balance-unit">SHRD</span></div>
+    <div class="balance-sub" id="blockHeight">---</div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="action-btn primary" onclick="openModal('send')">
+      <span class="action-icon">&#8593;</span> Send
+    </button>
+    <button class="action-btn" onclick="openModal('receive')">
+      <span class="action-icon">&#8595;</span> Receive
+    </button>
+  </div>
+
+  <!-- Transactions -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Recent Activity</span>
+    </div>
+    <div class="tx-list" id="txList">
+      <div class="empty-state">No transactions yet</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="nav-item active" onclick="switchTab('wallet')">
+      <span class="nav-icon">&#9632;</span> Wallet
+    </button>
+    <button class="nav-item" onclick="openModal('send')">
+      <span class="nav-icon">&#8593;</span> Send
+    </button>
+    <button class="nav-item" onclick="openModal('receive')">
+      <span class="nav-icon">&#8595;</span> Receive
+    </button>
+    <button class="nav-item" onclick="openModal('network')">
+      <span class="nav-icon">&#9673;</span> Network
+    </button>
+  </div>
+</nav>
+
+<!-- Send Modal -->
+<div class="modal-overlay" id="modal-send" onclick="closeIfOverlay(event, 'send')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Send SHRD</div>
+    <div class="form-group">
+      <label class="form-label">Recipient Address</label>
+      <input class="form-input" id="sendAddress" placeholder="shrd1q..." autocomplete="off" spellcheck="false">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Amount (SHRD)</label>
+      <input class="form-input amount-input" id="sendAmount" type="number" step="0.00000001" min="0" placeholder="0.00">
+    </div>
+    <div class="error-msg" id="sendError"></div>
+    <div class="success-msg" id="sendSuccess"></div>
+    <button class="submit-btn" id="sendBtn" onclick="sendCoins()">Send ShardCoin</button>
+  </div>
+</div>
+
+<!-- Receive Modal -->
+<div class="modal-overlay" id="modal-receive" onclick="closeIfOverlay(event, 'receive')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Receive SHRD</div>
+    <div class="qr-container" id="qrCode"></div>
+    <div class="address-display" id="receiveAddress" onclick="copyAddress()">Generating address...</div>
+    <p style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:12px;">Tap address to copy</p>
+  </div>
+</div>
+
+<!-- Network Modal -->
+<div class="modal-overlay" id="modal-network" onclick="closeIfOverlay(event, 'network')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Network</div>
+    <div class="net-info">
+      <div class="net-stat">
+        <div class="net-stat-value" id="netBlocks">-</div>
+        <div class="net-stat-label">Blocks</div>
+      </div>
+      <div class="net-stat">
+        <div class="net-stat-value" id="netDifficulty">-</div>
+        <div class="net-stat-label">Difficulty</div>
+      </div>
+      <div class="net-stat">
+        <div class="net-stat-value" id="netChain">-</div>
+        <div class="net-stat-label">Chain</div>
+      </div>
+      <div class="net-stat">
+        <div class="net-stat-value" id="netSize">-</div>
+        <div class="net-stat-label">Disk Size</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="modal-settings" onclick="closeIfOverlay(event, 'settings')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Settings</div>
+    <div class="form-group">
+      <label class="form-label">RPC URL</label>
+      <input class="form-input" id="settingsRpcUrl" placeholder="http://127.0.0.1:7332">
+    </div>
+    <div class="form-group">
+      <label class="form-label">RPC Username</label>
+      <input class="form-input" id="settingsRpcUser" placeholder="rpcuser">
+    </div>
+    <div class="form-group">
+      <label class="form-label">RPC Password</label>
+      <input class="form-input" id="settingsRpcPass" type="password" placeholder="rpcpassword">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Wallet Name (optional)</label>
+      <input class="form-input" id="settingsWallet" placeholder="default">
+    </div>
+    <button class="submit-btn" onclick="saveSettings()">Save &amp; Connect</button>
+  </div>
+</div>
+
+<!-- Copy Toast -->
+<div class="copy-toast" id="copyToast">Copied to clipboard</div>
+
+<!-- QR Code library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+<script>
+// ── Config ──
+let config = {
+  rpcUrl: 'http://127.0.0.1:7332',
+  rpcUser: '',
+  rpcPass: '',
+  wallet: ''
+};
+
+// Load saved config
+const saved = localStorage.getItem('shardwallet_config');
+if (saved) config = JSON.parse(saved);
+
+let refreshTimer = null;
+
+// ── RPC ──
+async function rpc(method, params = []) {
+  const url = config.wallet
+    ? `${config.rpcUrl}/wallet/${config.wallet}`
+    : config.rpcUrl;
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (config.rpcUser) {
+    headers['Authorization'] = 'Basic ' + btoa(config.rpcUser + ':' + config.rpcPass);
+  }
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ jsonrpc: '1.0', id: Date.now(), method, params })
+  });
+
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.result;
+}
+
+// ── State ──
+function setStatus(connected, text) {
+  const dot = document.getElementById('statusDot');
+  const label = document.getElementById('statusText');
+  dot.className = 'status-dot ' + (connected ? 'connected' : 'error');
+  label.textContent = text;
+}
+
+function formatAmount(n) {
+  if (n === undefined || n === null) return '0.00';
+  const num = parseFloat(n);
+  if (num === Math.floor(num) && num < 1000) return num.toFixed(2);
+  return num.toFixed(8).replace(/0+$/, '').replace(/\.$/, '.00');
+}
+
+function formatTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts * 1000);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+  return d.toLocaleDateString();
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+  return (bytes / 1073741824).toFixed(2) + ' GB';
+}
+
+// ── Refresh ──
+async function refresh() {
+  try {
+    // Balance
+    const balance = await rpc('getbalance');
+    document.getElementById('balance').innerHTML =
+      formatAmount(balance) + '<span class="balance-unit">SHRD</span>';
+
+    // Block info
+    const info = await rpc('getblockchaininfo');
+    document.getElementById('blockHeight').textContent =
+      `Block ${info.blocks.toLocaleString()} \u00b7 ${info.chain}`;
+
+    // Network panel
+    document.getElementById('netBlocks').textContent = info.blocks.toLocaleString();
+    document.getElementById('netDifficulty').textContent =
+      parseFloat(info.difficulty).toExponential(2);
+    document.getElementById('netChain').textContent = info.chain;
+    document.getElementById('netSize').textContent = formatBytes(info.size_on_disk || 0);
+
+    setStatus(true, info.chain + ' \u00b7 block ' + info.blocks.toLocaleString());
+
+    // Transactions
+    try {
+      const txs = await rpc('listtransactions', ['*', 20, 0, true]);
+      renderTransactions(txs.reverse());
+    } catch (e) {
+      // Wallet might not be loaded
+    }
+  } catch (e) {
+    setStatus(false, 'Disconnected');
+    console.error('RPC error:', e.message);
+  }
+}
+
+function renderTransactions(txs) {
+  const list = document.getElementById('txList');
+  if (!txs || txs.length === 0) {
+    list.innerHTML = '<div class="empty-state">No transactions yet</div>';
+    return;
+  }
+
+  list.innerHTML = txs.map(tx => {
+    const isReceive = tx.category === 'receive' || tx.category === 'generate' || tx.category === 'immature';
+    const isMined = tx.category === 'generate' || tx.category === 'immature';
+    const iconClass = isMined ? 'generate' : (isReceive ? 'received' : 'sent');
+    const icon = isMined ? '&#9670;' : (isReceive ? '&#8595;' : '&#8593;');
+    const label = isMined ? 'Mined' : (isReceive ? 'Received' : 'Sent');
+    const sign = isReceive ? '+' : '';
+    const amountClass = isReceive ? 'positive' : 'negative';
+    const addr = tx.address || 'coinbase';
+
+    return `<div class="tx-item">
+      <div class="tx-icon ${iconClass}">${icon}</div>
+      <div class="tx-info">
+        <div class="tx-label">${label}</div>
+        <div class="tx-address">${addr}</div>
+      </div>
+      <div>
+        <div class="tx-amount ${amountClass}">${sign}${formatAmount(Math.abs(tx.amount))}</div>
+        <div class="tx-time">${formatTime(tx.time)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Send ──
+async function sendCoins() {
+  const addr = document.getElementById('sendAddress').value.trim();
+  const amount = parseFloat(document.getElementById('sendAmount').value);
+  const errEl = document.getElementById('sendError');
+  const successEl = document.getElementById('sendSuccess');
+  const btn = document.getElementById('sendBtn');
+
+  errEl.className = 'error-msg';
+  successEl.className = 'success-msg';
+
+  if (!addr) { errEl.textContent = 'Enter a recipient address'; errEl.className = 'error-msg show'; return; }
+  if (!amount || amount <= 0) { errEl.textContent = 'Enter a valid amount'; errEl.className = 'error-msg show'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    const txid = await rpc('sendtoaddress', [addr, amount]);
+    successEl.textContent = 'Sent! TX: ' + txid.substring(0, 16) + '...';
+    successEl.className = 'success-msg show';
+    document.getElementById('sendAddress').value = '';
+    document.getElementById('sendAmount').value = '';
+    refresh();
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.className = 'error-msg show';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Send ShardCoin';
+}
+
+// ── Receive ──
+async function generateAddress() {
+  try {
+    const addr = await rpc('getnewaddress');
+    document.getElementById('receiveAddress').textContent = addr;
+
+    const container = document.getElementById('qrCode');
+    container.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    container.appendChild(canvas);
+    QRCode.toCanvas(canvas, addr, {
+      width: 200,
+      margin: 2,
+      color: { dark: '#07070c', light: '#ffffff' }
+    });
+  } catch (e) {
+    document.getElementById('receiveAddress').textContent = 'Connect to node first';
+  }
+}
+
+function copyAddress() {
+  const addr = document.getElementById('receiveAddress').textContent;
+  if (addr && addr !== 'Generating address...' && addr !== 'Connect to node first') {
+    navigator.clipboard.writeText(addr);
+    const toast = document.getElementById('copyToast');
+    toast.className = 'copy-toast show';
+    setTimeout(() => toast.className = 'copy-toast', 2000);
+  }
+}
+
+// ── Modals ──
+function openModal(name) {
+  document.getElementById('modal-' + name).className = 'modal-overlay open';
+  if (name === 'receive') generateAddress();
+  if (name === 'settings') loadSettings();
+}
+
+function closeModal(name) {
+  document.getElementById('modal-' + name).className = 'modal-overlay';
+}
+
+function closeIfOverlay(e, name) {
+  if (e.target.classList.contains('modal-overlay')) closeModal(name);
+}
+
+// ── Settings ──
+function loadSettings() {
+  document.getElementById('settingsRpcUrl').value = config.rpcUrl;
+  document.getElementById('settingsRpcUser').value = config.rpcUser;
+  document.getElementById('settingsRpcPass').value = config.rpcPass;
+  document.getElementById('settingsWallet').value = config.wallet;
+}
+
+function saveSettings() {
+  config.rpcUrl = document.getElementById('settingsRpcUrl').value.trim() || 'http://127.0.0.1:7332';
+  config.rpcUser = document.getElementById('settingsRpcUser').value.trim();
+  config.rpcPass = document.getElementById('settingsRpcPass').value.trim();
+  config.wallet = document.getElementById('settingsWallet').value.trim();
+  localStorage.setItem('shardwallet_config', JSON.stringify(config));
+  closeModal('settings');
+  refresh();
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', i === 0 && name === 'wallet');
+  });
+}
+
+// ── Init ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+
+refresh();
+refreshTimer = setInterval(refresh, 10000);
+</script>
+</body>
+</html>
