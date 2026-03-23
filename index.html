@@ -3,472 +3,462 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#00e5a0">
+<meta name="theme-color" content="#1e1e2e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>ShardWallet</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ══════════════════════════════════════════
+   MONERO-STYLE SHARDWALLET
+   Left sidebar + content area desktop layout
+   Bottom nav on mobile
+   ══════════════════════════════════════════ */
+
 :root {
-  --bg-primary: #07070c;
-  --bg-secondary: #0e0e18;
-  --bg-card: #12121f;
-  --bg-card-hover: #181830;
-  --bg-input: #0c0c16;
-  --accent: #00e5a0;
-  --accent-dim: #00e5a020;
-  --accent-glow: #00e5a040;
-  --accent-secondary: #6c5ce7;
-  --text-primary: #e8e8f0;
-  --text-secondary: #6b6b8d;
-  --text-muted: #3d3d5c;
-  --border: #1a1a2e;
-  --border-active: #2a2a4e;
-  --danger: #ff4757;
-  --success: #00e5a0;
-  --warning: #ffa502;
-  --radius: 16px;
-  --radius-sm: 10px;
-  --radius-xs: 6px;
+  --bg-sidebar: #1e1e2e;
+  --bg-sidebar-active: #2a2a3e;
+  --bg-sidebar-hover: #252538;
+  --bg-content: #f5f5f7;
+  --bg-card: #ffffff;
+  --bg-input: #f0f0f4;
+  --bg-header: #ffffff;
+  --accent: #6B49C8;
+  --accent-light: #8b6ce0;
+  --accent-dim: #6B49C815;
+  --accent-glow: #6B49C830;
+  --text-dark: #1a1a2e;
+  --text-body: #3a3a5c;
+  --text-muted: #8888aa;
+  --text-sidebar: #b0b0cc;
+  --text-sidebar-active: #ffffff;
+  --border: #e0e0ea;
+  --border-input: #d0d0de;
+  --success: #2ecc71;
+  --danger: #e74c3c;
+  --warning: #f39c12;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
   height: 100%;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: 'Outfit', -apple-system, sans-serif;
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  background: var(--bg-content);
+  color: var(--text-dark);
 }
 
-/* ── Ambient background ── */
-body::before {
-  content: '';
-  position: fixed;
-  top: -40%; left: -20%;
-  width: 80%; height: 80%;
-  background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-body::after {
-  content: '';
-  position: fixed;
-  bottom: -30%; right: -20%;
-  width: 60%; height: 60%;
-  background: radial-gradient(ellipse, #6c5ce710 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ── App Shell ── */
-#app {
-  position: relative;
-  z-index: 1;
-  max-width: 480px;
-  margin: 0 auto;
-  min-height: 100vh;
-  padding: 0 0 100px 0;
-}
-
-/* ── Header ── */
-.header {
-  padding: 24px 20px 0;
+/* ── Layout ── */
+.app {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: -0.5px;
-}
-
-.logo-mark {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--bg-primary);
-}
-
-.settings-btn {
-  width: 40px; height: 40px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-.settings-btn:hover {
-  background: var(--bg-card-hover);
-  color: var(--text-primary);
-  border-color: var(--border-active);
-}
-
-/* ── Status Bar ── */
-.status-bar {
-  margin: 16px 20px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.status-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  transition: background 0.3s;
-}
-.status-dot.connected { background: var(--success); box-shadow: 0 0 8px var(--accent-glow); }
-.status-dot.error { background: var(--danger); }
-
-.status-text {
-  font-size: 12px;
-  color: var(--text-muted);
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-/* ── Balance Card ── */
-.balance-card {
-  margin: 24px 20px 0;
-  padding: 32px 28px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  position: relative;
+  height: 100vh;
   overflow: hidden;
 }
-.balance-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.5;
-}
 
-.balance-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-weight: 500;
-  margin-bottom: 12px;
-}
-
-.balance-amount {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 42px;
-  font-weight: 700;
-  letter-spacing: -2px;
-  line-height: 1;
-  background: linear-gradient(135deg, var(--text-primary) 40%, var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.balance-unit {
-  font-size: 18px;
-  font-weight: 400;
-  letter-spacing: 2px;
-  opacity: 0.5;
-  margin-left: 4px;
-}
-
-.balance-sub {
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--text-muted);
-  font-family: 'JetBrains Mono', monospace;
-}
-
-/* ── Action Buttons ── */
-.actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 20px 20px 0;
-}
-
-.action-btn {
-  padding: 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text-primary);
-  font-family: 'Outfit', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.2s;
-}
-.action-btn:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-active);
-  transform: translateY(-1px);
-}
-.action-btn.primary {
-  background: linear-gradient(135deg, var(--accent), #00c98a);
-  border-color: transparent;
-  color: var(--bg-primary);
-}
-.action-btn.primary:hover {
-  box-shadow: 0 4px 24px var(--accent-glow);
-  transform: translateY(-2px);
-}
-
-.action-icon {
-  font-size: 20px;
-}
-
-/* ── Section ── */
-.section {
-  margin: 28px 20px 0;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-
-/* ── Transaction List ── */
-.tx-list {
+/* ── Sidebar ── */
+.sidebar {
+  width: 260px;
+  background: var(--bg-sidebar);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
-.tx-item {
+.sidebar-brand {
+  padding: 28px 24px 24px;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.tx-item:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-active);
+  border-bottom: 1px solid #2a2a40;
 }
 
-.tx-icon {
-  width: 40px; height: 40px;
+.brand-icon {
+  width: 42px; height: 42px;
+  background: var(--accent);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-.tx-icon.received {
-  background: #00e5a015;
-  color: var(--accent);
-}
-.tx-icon.sent {
-  background: #ff475715;
-  color: var(--danger);
-}
-.tx-icon.generate {
-  background: #ffa50215;
-  color: var(--warning);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
 }
 
-.tx-info {
-  flex: 1;
-  min-width: 0;
+.brand-text {
+  display: flex;
+  flex-direction: column;
 }
 
-.tx-label {
-  font-weight: 500;
-  font-size: 14px;
-  margin-bottom: 3px;
+.brand-name {
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  letter-spacing: -0.3px;
 }
 
-.tx-address {
-  font-family: 'JetBrains Mono', monospace;
+.brand-sub {
   font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.tx-amount {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  font-size: 14px;
-  text-align: right;
-  white-space: nowrap;
-}
-.tx-amount.positive { color: var(--accent); }
-.tx-amount.negative { color: var(--danger); }
-
-.tx-time {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-align: right;
+  color: var(--text-sidebar);
   margin-top: 2px;
 }
 
-.empty-state {
+/* Sidebar balance */
+.sidebar-balance {
+  padding: 20px 24px;
+  border-bottom: 1px solid #2a2a40;
+}
+
+.sidebar-balance-label {
+  font-size: 11px;
+  color: var(--text-sidebar);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.sidebar-balance-amount {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.sidebar-balance-unit {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-sidebar);
+  margin-left: 4px;
+}
+
+.sidebar-balance-unlocked {
+  font-size: 12px;
+  color: var(--text-sidebar);
+  margin-top: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Sidebar nav */
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 24px;
+  color: var(--text-sidebar);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+  background: none;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.nav-item:hover {
+  background: var(--bg-sidebar-hover);
+  color: #ddd;
+}
+.nav-item.active {
+  background: var(--bg-sidebar-active);
+  color: var(--text-sidebar-active);
+  border-left-color: var(--accent);
+}
+
+.nav-icon {
+  width: 22px;
   text-align: center;
-  padding: 40px 20px;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.nav-divider {
+  height: 1px;
+  background: #2a2a40;
+  margin: 8px 24px;
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #2a2a40;
+}
+
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-sidebar);
+}
+
+.sync-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+}
+.sync-dot.connected { background: var(--success); box-shadow: 0 0 6px #2ecc7160; }
+.sync-dot.error { background: var(--danger); }
+
+/* ── Content Area ── */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Content Header */
+.content-header {
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.header-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text-body);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.header-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Content Body */
+.content-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 32px;
+}
+
+/* ── Pages ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Account/Dashboard Page ── */
+.balance-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.stat-card-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.stat-card-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.stat-card-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ── Transaction History ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Table */
+.tx-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tx-table th {
+  text-align: left;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  background: #fafafc;
+  border-bottom: 1px solid var(--border);
+}
+
+.tx-table td {
+  padding: 14px 20px;
+  font-size: 13px;
+  border-bottom: 1px solid #f0f0f4;
+  vertical-align: middle;
+}
+
+.tx-table tr:last-child td { border-bottom: none; }
+
+.tx-table tr:hover td { background: #fafafc; }
+
+.tx-direction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.tx-dir-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.tx-dir-icon.in { background: #2ecc7118; color: var(--success); }
+.tx-dir-icon.out { background: #e74c3c18; color: var(--danger); }
+.tx-dir-icon.mine { background: #f39c1218; color: var(--warning); }
+
+.tx-addr {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tx-amount {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 13px;
+}
+.tx-amount.positive { color: var(--success); }
+.tx-amount.negative { color: var(--danger); }
+
+.tx-time {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tx-confs {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.empty-table {
+  text-align: center;
+  padding: 48px 20px;
   color: var(--text-muted);
   font-size: 14px;
 }
 
-/* ── Bottom Nav ── */
-.bottom-nav {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: center;
-  padding: 8px 0;
-  padding-bottom: max(8px, env(safe-area-inset-bottom));
-  z-index: 100;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+/* ── Send Page ── */
+.send-form {
+  max-width: 560px;
 }
 
-.bottom-nav-inner {
-  display: flex;
-  max-width: 480px;
-  width: 100%;
-}
-
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 0;
-  color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.2s;
-  background: none;
-  border: none;
-  font-family: 'Outfit', sans-serif;
-}
-.nav-item:hover, .nav-item.active {
-  color: var(--accent);
-}
-.nav-icon { font-size: 22px; }
-
-/* ── Modal / Panels ── */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: #00000080;
-  backdrop-filter: blur(8px);
-  z-index: 200;
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-
-.modal {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius) var(--radius) 0 0;
-  width: 100%;
-  max-width: 480px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 28px 24px;
-  padding-bottom: max(28px, env(safe-area-inset-bottom));
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-handle {
-  width: 36px; height: 4px;
-  background: var(--text-muted);
-  border-radius: 2px;
-  margin: 0 auto 20px;
-}
-
-.modal-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  letter-spacing: -0.5px;
-}
-
-/* ── Form ── */
 .form-group {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .form-label {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
+  color: var(--text-body);
+  margin-bottom: 6px;
+}
+
+.form-sublabel {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-left: 4px;
 }
 
 .form-input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 14px;
   background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius);
+  color: var(--text-dark);
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .form-input:focus {
   border-color: var(--accent);
@@ -476,588 +466,747 @@ body::after {
 }
 .form-input::placeholder {
   color: var(--text-muted);
+  font-family: 'IBM Plex Sans', sans-serif;
 }
 
-.form-input.amount-input {
-  font-size: 28px;
-  font-weight: 700;
-  text-align: center;
-  padding: 20px;
-  letter-spacing: -1px;
-}
-
-.submit-btn {
-  width: 100%;
+.form-input-lg {
+  font-size: 24px;
+  font-weight: 600;
   padding: 16px;
-  background: linear-gradient(135deg, var(--accent), #00c98a);
+  letter-spacing: -0.5px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+.form-row .form-group { flex: 1; }
+
+.form-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.send-btn {
+  padding: 14px 32px;
+  background: var(--accent);
   border: none;
-  border-radius: var(--radius-sm);
-  color: var(--bg-primary);
-  font-family: 'Outfit', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
+  border-radius: var(--radius);
+  color: #fff;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  margin-top: 8px;
 }
-.submit-btn:hover {
-  box-shadow: 0 4px 24px var(--accent-glow);
-  transform: translateY(-1px);
+.send-btn:hover {
+  background: var(--accent-light);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
-.submit-btn:disabled {
-  opacity: 0.4;
+.send-btn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
-/* ── Receive Panel ── */
-.qr-container {
-  background: #fff;
+.alert {
+  padding: 12px 16px;
   border-radius: var(--radius);
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
+  font-size: 13px;
+  margin-top: 16px;
+  display: none;
 }
-.qr-container canvas, .qr-container img {
-  max-width: 200px;
-  width: 100%;
-  height: auto;
-  image-rendering: pixelated;
+.alert.error { display: block; background: #e74c3c12; border: 1px solid #e74c3c30; color: var(--danger); }
+.alert.success { display: block; background: #2ecc7112; border: 1px solid #2ecc7130; color: var(--success); }
+
+/* ── Receive Page ── */
+.receive-container {
+  max-width: 560px;
 }
 
-.address-display {
-  background: var(--bg-input);
+.receive-card {
+  background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+
+.qr-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+.qr-box canvas { display: block; }
+
+.receive-address {
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius);
   padding: 14px 16px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
   word-break: break-all;
-  line-height: 1.6;
+  line-height: 1.7;
   color: var(--accent);
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
   text-align: center;
 }
-.address-display:hover {
+.receive-address:hover {
   border-color: var(--accent);
+  background: var(--accent-dim);
 }
 
-.copy-toast {
+.receive-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 12px;
+}
+
+.generate-btn {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.generate-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Settings Page ── */
+.settings-form {
+  max-width: 560px;
+}
+
+.settings-section {
+  margin-bottom: 32px;
+}
+
+.settings-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Network Page ── */
+.network-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 560px;
+}
+
+.network-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.network-stat-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.network-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* ── Toast ── */
+.toast {
   position: fixed;
-  top: 40px;
+  top: 24px;
   left: 50%; transform: translateX(-50%);
   background: var(--accent);
-  color: var(--bg-primary);
+  color: #fff;
   padding: 10px 24px;
   border-radius: 100px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   z-index: 999;
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
+  box-shadow: var(--shadow-elevated);
 }
-.copy-toast.show { opacity: 1; }
+.toast.show { opacity: 1; }
 
-/* ── Settings Panel ── */
-.settings-group {
-  margin-bottom: 20px;
-}
-
-.settings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.settings-key {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.settings-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  color: var(--text-primary);
-}
-
-/* ── Network Info ── */
-.net-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.net-stat {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-}
-
-.net-stat-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.net-stat-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 4px;
-}
-
-/* ── Loading ── */
+/* ── Spinner ── */
 .spinner {
-  width: 20px; height: 20px;
-  border: 2px solid var(--text-muted);
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
-  margin: 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Responsive ── */
-@media (min-width: 600px) {
-  #app { padding-top: 20px; }
-  .bottom-nav { border-radius: var(--radius) var(--radius) 0 0; max-width: 480px; left: 50%; transform: translateX(-50%); }
-  .modal { border-radius: var(--radius); margin-bottom: 20px; }
+/* ── Mobile ── */
+.mobile-header {
+  display: none;
+  background: var(--bg-sidebar);
+  padding: 16px 20px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #2a2a40;
 }
 
-/* ── Error ── */
-.error-msg {
-  background: #ff475715;
-  border: 1px solid #ff475730;
-  border-radius: var(--radius-xs);
-  padding: 10px 14px;
-  font-size: 13px;
-  color: var(--danger);
-  margin-top: 10px;
-  display: none;
-}
-.error-msg.show { display: block; }
+.mobile-header .brand-name { color: #fff; font-weight: 700; font-size: 18px; }
 
-.success-msg {
-  background: #00e5a015;
-  border: 1px solid #00e5a030;
-  border-radius: var(--radius-xs);
-  padding: 10px 14px;
-  font-size: 13px;
-  color: var(--accent);
-  margin-top: 10px;
-  display: none;
+.mobile-menu-btn {
+  background: none;
+  border: none;
+  color: var(--text-sidebar);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
 }
-.success-msg.show { display: block; }
+
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--bg-sidebar);
+  border-top: 1px solid #2a2a40;
+  padding: 6px 0;
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  z-index: 100;
+}
+
+.mobile-bottom-nav-inner {
+  display: flex;
+}
+
+.mobile-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 0;
+  color: var(--text-sidebar);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'IBM Plex Sans', sans-serif;
+  transition: color 0.15s;
+}
+.mobile-nav-item .nav-icon { font-size: 20px; }
+.mobile-nav-item:hover, .mobile-nav-item.active { color: var(--accent-light); }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .mobile-header { display: flex; }
+  .mobile-bottom-nav { display: block; }
+  .content-body { padding: 20px 16px; padding-bottom: 80px; }
+  .content-header { padding: 16px 16px; }
+  .balance-cards { grid-template-columns: 1fr; }
+  .form-row { flex-direction: column; gap: 0; }
+  .network-grid { grid-template-columns: 1fr; }
+  .page-title { font-size: 18px; }
+  .tx-table th:nth-child(3), .tx-table td:nth-child(3) { display: none; }
+}
+
+@media (max-width: 480px) {
+  .stat-card-value { font-size: 20px; }
+  .tx-table th:nth-child(4), .tx-table td:nth-child(4) { display: none; }
+}
 </style>
 </head>
 <body>
 
-<div id="app">
-  <!-- Header -->
-  <div class="header">
-    <div class="logo">
-      <div class="logo-mark">S</div>
-      <span>ShardWallet</span>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">S</div>
+      <div class="brand-text">
+        <div class="brand-name">ShardWallet</div>
+        <div class="brand-sub">ShardCoin Core</div>
+      </div>
     </div>
-    <button class="settings-btn" onclick="openModal('settings')">&#9881;</button>
-  </div>
 
-  <!-- Status -->
-  <div class="status-bar">
-    <div class="status-dot" id="statusDot"></div>
-    <span class="status-text" id="statusText">Connecting...</span>
-  </div>
-
-  <!-- Balance -->
-  <div class="balance-card">
-    <div class="balance-label">Total Balance</div>
-    <div class="balance-amount" id="balance">0.00<span class="balance-unit">SHRD</span></div>
-    <div class="balance-sub" id="blockHeight">---</div>
-  </div>
-
-  <!-- Actions -->
-  <div class="actions">
-    <button class="action-btn primary" onclick="openModal('send')">
-      <span class="action-icon">&#8593;</span> Send
-    </button>
-    <button class="action-btn" onclick="openModal('receive')">
-      <span class="action-icon">&#8595;</span> Receive
-    </button>
-  </div>
-
-  <!-- Transactions -->
-  <div class="section">
-    <div class="section-header">
-      <span class="section-title">Recent Activity</span>
+    <div class="sidebar-balance">
+      <div class="sidebar-balance-label">Balance</div>
+      <div class="sidebar-balance-amount" id="sidebarBalance">0.00<span class="sidebar-balance-unit">SHRD</span></div>
+      <div class="sidebar-balance-unlocked" id="sidebarUnlocked">Unlocked: 0.00 SHRD</div>
     </div>
-    <div class="tx-list" id="txList">
-      <div class="empty-state">No transactions yet</div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-page="account">
+        <span class="nav-icon">&#9632;</span> Account
+      </button>
+      <button class="nav-item" data-page="send">
+        <span class="nav-icon">&#8593;</span> Send
+      </button>
+      <button class="nav-item" data-page="receive">
+        <span class="nav-icon">&#8595;</span> Receive
+      </button>
+      <button class="nav-item" data-page="history">
+        <span class="nav-icon">&#9776;</span> Transactions
+      </button>
+      <div class="nav-divider"></div>
+      <button class="nav-item" data-page="network">
+        <span class="nav-icon">&#9673;</span> Advanced
+      </button>
+      <button class="nav-item" data-page="settings">
+        <span class="nav-icon">&#9881;</span> Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sync-status">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncText">Connecting...</span>
+      </div>
     </div>
-  </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content">
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <span class="brand-name">ShardWallet</span>
+      <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">&#9776;</button>
+    </div>
+
+    <!-- Content Header -->
+    <div class="content-header">
+      <h1 class="page-title" id="pageTitle">Account</h1>
+      <div class="header-actions" id="headerActions"></div>
+    </div>
+
+    <!-- Content Body -->
+    <div class="content-body">
+
+      <!-- Account Page -->
+      <div class="page active" id="page-account">
+        <div class="balance-cards">
+          <div class="stat-card">
+            <div class="stat-card-label">Total Balance</div>
+            <div class="stat-card-value" id="totalBalance">0.00</div>
+            <div class="stat-card-sub">SHRD</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Block Height</div>
+            <div class="stat-card-value" id="blockHeight">-</div>
+            <div class="stat-card-sub" id="chainName">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Difficulty</div>
+            <div class="stat-card-value" id="difficulty">-</div>
+            <div class="stat-card-sub">Current</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent Transactions</span>
+          </div>
+          <table class="tx-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Address</th>
+                <th>Date</th>
+                <th>Conf.</th>
+              </tr>
+            </thead>
+            <tbody id="txTableBody">
+              <tr><td colspan="5" class="empty-table">No transactions yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Send Page -->
+      <div class="page" id="page-send">
+        <div class="send-form">
+          <div class="card" style="padding: 28px;">
+            <div class="form-group">
+              <label class="form-label">Address <span class="form-sublabel">Recipient's ShardCoin address</span></label>
+              <input class="form-input" id="sendAddress" placeholder="shrd1q..." autocomplete="off" spellcheck="false">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Amount</label>
+                <input class="form-input form-input-lg" id="sendAmount" type="number" step="0.00000001" min="0" placeholder="0.00">
+                <div class="form-hint">SHRD</div>
+              </div>
+            </div>
+
+            <div id="sendAlert"></div>
+
+            <button class="send-btn" id="sendBtn" onclick="sendCoins()">Send SHRD</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Receive Page -->
+      <div class="page" id="page-receive">
+        <div class="receive-container">
+          <div class="receive-card">
+            <div class="qr-box" id="qrCode"></div>
+            <div class="receive-address" id="receiveAddr" onclick="copyAddr()">Generating address...</div>
+            <div class="receive-hint">Click address to copy to clipboard</div>
+            <button class="generate-btn" onclick="genAddr()">Generate New Address</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Page -->
+      <div class="page" id="page-history">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">All Transactions</span>
+          </div>
+          <table class="tx-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Address</th>
+                <th>Date</th>
+                <th>Confirmations</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr><td colspan="5" class="empty-table">No transactions yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Network/Advanced Page -->
+      <div class="page" id="page-network">
+        <div class="network-grid">
+          <div class="network-stat">
+            <div class="network-stat-value" id="netBlocks">-</div>
+            <div class="network-stat-label">Block Height</div>
+          </div>
+          <div class="network-stat">
+            <div class="network-stat-value" id="netDiff">-</div>
+            <div class="network-stat-label">Difficulty</div>
+          </div>
+          <div class="network-stat">
+            <div class="network-stat-value" id="netChain">-</div>
+            <div class="network-stat-label">Network</div>
+          </div>
+          <div class="network-stat">
+            <div class="network-stat-value" id="netSize">-</div>
+            <div class="network-stat-label">Blockchain Size</div>
+          </div>
+          <div class="network-stat">
+            <div class="network-stat-value" id="netVerification">-</div>
+            <div class="network-stat-label">Verification</div>
+          </div>
+          <div class="network-stat">
+            <div class="network-stat-value" id="netPruned">-</div>
+            <div class="network-stat-label">Pruned</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Page -->
+      <div class="page" id="page-settings">
+        <div class="settings-form">
+          <div class="card" style="padding: 28px;">
+            <div class="settings-section">
+              <div class="settings-section-title">Node Connection</div>
+              <div class="form-group">
+                <label class="form-label">RPC URL</label>
+                <input class="form-input" id="setUrl" placeholder="http://127.0.0.1:7332">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Username</label>
+                  <input class="form-input" id="setUser" placeholder="rpcuser">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Password</label>
+                  <input class="form-input" id="setPass" type="password" placeholder="rpcpassword">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Wallet Name <span class="form-sublabel">(optional)</span></label>
+                <input class="form-input" id="setWallet" placeholder="default">
+              </div>
+            </div>
+            <button class="send-btn" onclick="saveSettings()">Save &amp; Connect</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
 </div>
 
-<!-- Bottom Nav -->
-<nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <button class="nav-item active" onclick="switchTab('wallet')">
-      <span class="nav-icon">&#9632;</span> Wallet
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-bottom-nav">
+  <div class="mobile-bottom-nav-inner">
+    <button class="mobile-nav-item active" data-page="account">
+      <span class="nav-icon">&#9632;</span> Account
     </button>
-    <button class="nav-item" onclick="openModal('send')">
+    <button class="mobile-nav-item" data-page="send">
       <span class="nav-icon">&#8593;</span> Send
     </button>
-    <button class="nav-item" onclick="openModal('receive')">
+    <button class="mobile-nav-item" data-page="receive">
       <span class="nav-icon">&#8595;</span> Receive
     </button>
-    <button class="nav-item" onclick="openModal('network')">
-      <span class="nav-icon">&#9673;</span> Network
+    <button class="mobile-nav-item" data-page="history">
+      <span class="nav-icon">&#9776;</span> History
+    </button>
+    <button class="mobile-nav-item" data-page="settings">
+      <span class="nav-icon">&#9881;</span> Settings
     </button>
   </div>
 </nav>
 
-<!-- Send Modal -->
-<div class="modal-overlay" id="modal-send" onclick="closeIfOverlay(event, 'send')">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Send SHRD</div>
-    <div class="form-group">
-      <label class="form-label">Recipient Address</label>
-      <input class="form-input" id="sendAddress" placeholder="shrd1q..." autocomplete="off" spellcheck="false">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Amount (SHRD)</label>
-      <input class="form-input amount-input" id="sendAmount" type="number" step="0.00000001" min="0" placeholder="0.00">
-    </div>
-    <div class="error-msg" id="sendError"></div>
-    <div class="success-msg" id="sendSuccess"></div>
-    <button class="submit-btn" id="sendBtn" onclick="sendCoins()">Send ShardCoin</button>
-  </div>
-</div>
+<!-- Toast -->
+<div class="toast" id="toast">Copied to clipboard</div>
 
-<!-- Receive Modal -->
-<div class="modal-overlay" id="modal-receive" onclick="closeIfOverlay(event, 'receive')">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Receive SHRD</div>
-    <div class="qr-container" id="qrCode"></div>
-    <div class="address-display" id="receiveAddress" onclick="copyAddress()">Generating address...</div>
-    <p style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:12px;">Tap address to copy</p>
-  </div>
-</div>
-
-<!-- Network Modal -->
-<div class="modal-overlay" id="modal-network" onclick="closeIfOverlay(event, 'network')">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Network</div>
-    <div class="net-info">
-      <div class="net-stat">
-        <div class="net-stat-value" id="netBlocks">-</div>
-        <div class="net-stat-label">Blocks</div>
-      </div>
-      <div class="net-stat">
-        <div class="net-stat-value" id="netDifficulty">-</div>
-        <div class="net-stat-label">Difficulty</div>
-      </div>
-      <div class="net-stat">
-        <div class="net-stat-value" id="netChain">-</div>
-        <div class="net-stat-label">Chain</div>
-      </div>
-      <div class="net-stat">
-        <div class="net-stat-value" id="netSize">-</div>
-        <div class="net-stat-label">Disk Size</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Settings Modal -->
-<div class="modal-overlay" id="modal-settings" onclick="closeIfOverlay(event, 'settings')">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Settings</div>
-    <div class="form-group">
-      <label class="form-label">RPC URL</label>
-      <input class="form-input" id="settingsRpcUrl" placeholder="http://127.0.0.1:7332">
-    </div>
-    <div class="form-group">
-      <label class="form-label">RPC Username</label>
-      <input class="form-input" id="settingsRpcUser" placeholder="rpcuser">
-    </div>
-    <div class="form-group">
-      <label class="form-label">RPC Password</label>
-      <input class="form-input" id="settingsRpcPass" type="password" placeholder="rpcpassword">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Wallet Name (optional)</label>
-      <input class="form-input" id="settingsWallet" placeholder="default">
-    </div>
-    <button class="submit-btn" onclick="saveSettings()">Save &amp; Connect</button>
-  </div>
-</div>
-
-<!-- Copy Toast -->
-<div class="copy-toast" id="copyToast">Copied to clipboard</div>
-
-<!-- QR Code library -->
+<!-- QR Library -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
 <script>
 // ── Config ──
-let config = {
-  rpcUrl: 'http://127.0.0.1:7332',
-  rpcUser: '',
-  rpcPass: '',
-  wallet: ''
-};
-
-// Load saved config
-const saved = localStorage.getItem('shardwallet_config');
-if (saved) config = JSON.parse(saved);
-
-let refreshTimer = null;
+let cfg = JSON.parse(localStorage.getItem('shardwallet_config') || '{}');
+if (!cfg.rpcUrl) cfg = { rpcUrl: 'http://127.0.0.1:7332', rpcUser: '', rpcPass: '', wallet: '' };
 
 // ── RPC ──
 async function rpc(method, params = []) {
-  const url = config.wallet
-    ? `${config.rpcUrl}/wallet/${config.wallet}`
-    : config.rpcUrl;
-
+  const url = cfg.wallet ? `${cfg.rpcUrl}/wallet/${cfg.wallet}` : cfg.rpcUrl;
   const headers = { 'Content-Type': 'application/json' };
-  if (config.rpcUser) {
-    headers['Authorization'] = 'Basic ' + btoa(config.rpcUser + ':' + config.rpcPass);
-  }
-
+  if (cfg.rpcUser) headers['Authorization'] = 'Basic ' + btoa(cfg.rpcUser + ':' + cfg.rpcPass);
   const res = await fetch(url, {
-    method: 'POST',
-    headers,
+    method: 'POST', headers,
     body: JSON.stringify({ jsonrpc: '1.0', id: Date.now(), method, params })
   });
-
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);
   return data.result;
 }
 
-// ── State ──
-function setStatus(connected, text) {
-  const dot = document.getElementById('statusDot');
-  const label = document.getElementById('statusText');
-  dot.className = 'status-dot ' + (connected ? 'connected' : 'error');
-  label.textContent = text;
+// ── Formatting ──
+function fmtAmt(n) {
+  if (n == null) return '0.00';
+  const v = parseFloat(n);
+  return v === Math.floor(v) && Math.abs(v) < 1000 ? v.toFixed(2) : v.toFixed(8).replace(/0+$/, '').replace(/\.$/, '.00');
 }
 
-function formatAmount(n) {
-  if (n === undefined || n === null) return '0.00';
-  const num = parseFloat(n);
-  if (num === Math.floor(num) && num < 1000) return num.toFixed(2);
-  return num.toFixed(8).replace(/0+$/, '').replace(/\.$/, '.00');
-}
-
-function formatTime(ts) {
-  if (!ts) return '';
+function fmtTime(ts) {
+  if (!ts) return '-';
   const d = new Date(ts * 1000);
-  const now = new Date();
-  const diff = (now - d) / 1000;
-  if (diff < 60) return 'Just now';
-  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
-  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-  if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
-  return d.toLocaleDateString();
+  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-function formatBytes(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-  if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
-  return (bytes / 1073741824).toFixed(2) + ' GB';
+function fmtBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+  if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB';
+  return (b / 1073741824).toFixed(2) + ' GB';
 }
+
+// ── Navigation ──
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll(`[data-page="${page}"]`).forEach(n => n.classList.add('active'));
+
+  const titles = { account: 'Account', send: 'Send', receive: 'Receive', history: 'Transactions', network: 'Advanced', settings: 'Settings' };
+  document.getElementById('pageTitle').textContent = titles[page] || page;
+
+  if (page === 'receive') genAddr();
+  if (page === 'settings') loadSettings();
+}
+
+document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(btn => {
+  btn.addEventListener('click', () => navigate(btn.dataset.page));
+});
 
 // ── Refresh ──
 async function refresh() {
   try {
-    // Balance
-    const balance = await rpc('getbalance');
-    document.getElementById('balance').innerHTML =
-      formatAmount(balance) + '<span class="balance-unit">SHRD</span>';
-
-    // Block info
+    const bal = await rpc('getbalance');
     const info = await rpc('getblockchaininfo');
-    document.getElementById('blockHeight').textContent =
-      `Block ${info.blocks.toLocaleString()} \u00b7 ${info.chain}`;
 
-    // Network panel
+    // Sidebar
+    document.getElementById('sidebarBalance').innerHTML = fmtAmt(bal) + '<span class="sidebar-balance-unit">SHRD</span>';
+    document.getElementById('sidebarUnlocked').textContent = 'Unlocked: ' + fmtAmt(bal) + ' SHRD';
+
+    // Dashboard cards
+    document.getElementById('totalBalance').textContent = fmtAmt(bal);
+    document.getElementById('blockHeight').textContent = info.blocks.toLocaleString();
+    document.getElementById('chainName').textContent = info.chain;
+    document.getElementById('difficulty').textContent = parseFloat(info.difficulty).toExponential(2);
+
+    // Network page
     document.getElementById('netBlocks').textContent = info.blocks.toLocaleString();
-    document.getElementById('netDifficulty').textContent =
-      parseFloat(info.difficulty).toExponential(2);
+    document.getElementById('netDiff').textContent = parseFloat(info.difficulty).toExponential(2);
     document.getElementById('netChain').textContent = info.chain;
-    document.getElementById('netSize').textContent = formatBytes(info.size_on_disk || 0);
+    document.getElementById('netSize').textContent = fmtBytes(info.size_on_disk || 0);
+    document.getElementById('netVerification').textContent = (info.verificationprogress * 100).toFixed(2) + '%';
+    document.getElementById('netPruned').textContent = info.pruned ? 'Yes' : 'No';
 
-    setStatus(true, info.chain + ' \u00b7 block ' + info.blocks.toLocaleString());
+    // Status
+    document.getElementById('syncDot').className = 'sync-dot connected';
+    document.getElementById('syncText').textContent = info.chain + ' · block ' + info.blocks.toLocaleString();
 
     // Transactions
     try {
-      const txs = await rpc('listtransactions', ['*', 20, 0, true]);
-      renderTransactions(txs.reverse());
-    } catch (e) {
-      // Wallet might not be loaded
-    }
+      const txs = await rpc('listtransactions', ['*', 50, 0, true]);
+      renderTx(txs.reverse(), 'txTableBody', 10);
+      renderTx(txs, 'historyTableBody', 50);
+    } catch (e) {}
   } catch (e) {
-    setStatus(false, 'Disconnected');
-    console.error('RPC error:', e.message);
+    document.getElementById('syncDot').className = 'sync-dot error';
+    document.getElementById('syncText').textContent = 'Disconnected';
   }
 }
 
-function renderTransactions(txs) {
-  const list = document.getElementById('txList');
-  if (!txs || txs.length === 0) {
-    list.innerHTML = '<div class="empty-state">No transactions yet</div>';
+function renderTx(txs, tableId, limit) {
+  const tbody = document.getElementById(tableId);
+  if (!txs || !txs.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-table">No transactions yet</td></tr>';
     return;
   }
-
-  list.innerHTML = txs.map(tx => {
-    const isReceive = tx.category === 'receive' || tx.category === 'generate' || tx.category === 'immature';
-    const isMined = tx.category === 'generate' || tx.category === 'immature';
-    const iconClass = isMined ? 'generate' : (isReceive ? 'received' : 'sent');
-    const icon = isMined ? '&#9670;' : (isReceive ? '&#8595;' : '&#8593;');
-    const label = isMined ? 'Mined' : (isReceive ? 'Received' : 'Sent');
-    const sign = isReceive ? '+' : '';
-    const amountClass = isReceive ? 'positive' : 'negative';
-    const addr = tx.address || 'coinbase';
-
-    return `<div class="tx-item">
-      <div class="tx-icon ${iconClass}">${icon}</div>
-      <div class="tx-info">
-        <div class="tx-label">${label}</div>
-        <div class="tx-address">${addr}</div>
-      </div>
-      <div>
-        <div class="tx-amount ${amountClass}">${sign}${formatAmount(Math.abs(tx.amount))}</div>
-        <div class="tx-time">${formatTime(tx.time)}</div>
-      </div>
-    </div>`;
+  tbody.innerHTML = txs.slice(0, limit).map(tx => {
+    const isIn = tx.category === 'receive' || tx.category === 'generate' || tx.category === 'immature';
+    const isMine = tx.category === 'generate' || tx.category === 'immature';
+    const cls = isMine ? 'mine' : (isIn ? 'in' : 'out');
+    const icon = isMine ? '&#9670;' : (isIn ? '&#8595;' : '&#8593;');
+    const label = isMine ? 'Mined' : (isIn ? 'Received' : 'Sent');
+    const sign = isIn ? '+' : '-';
+    const amtCls = isIn ? 'positive' : 'negative';
+    return `<tr>
+      <td><span class="tx-direction"><span class="tx-dir-icon ${cls}">${icon}</span> ${label}</span></td>
+      <td><span class="tx-amount ${amtCls}">${sign}${fmtAmt(Math.abs(tx.amount))}</span></td>
+      <td><span class="tx-addr">${tx.address || 'coinbase'}</span></td>
+      <td><span class="tx-time">${fmtTime(tx.time)}</span></td>
+      <td><span class="tx-confs">${tx.confirmations || 0}</span></td>
+    </tr>`;
   }).join('');
 }
 
 // ── Send ──
 async function sendCoins() {
   const addr = document.getElementById('sendAddress').value.trim();
-  const amount = parseFloat(document.getElementById('sendAmount').value);
-  const errEl = document.getElementById('sendError');
-  const successEl = document.getElementById('sendSuccess');
+  const amt = parseFloat(document.getElementById('sendAmount').value);
+  const alertEl = document.getElementById('sendAlert');
   const btn = document.getElementById('sendBtn');
+  alertEl.innerHTML = ''; alertEl.className = '';
 
-  errEl.className = 'error-msg';
-  successEl.className = 'success-msg';
+  if (!addr) { alertEl.innerHTML = 'Enter a recipient address'; alertEl.className = 'alert error'; return; }
+  if (!amt || amt <= 0) { alertEl.innerHTML = 'Enter a valid amount'; alertEl.className = 'alert error'; return; }
 
-  if (!addr) { errEl.textContent = 'Enter a recipient address'; errEl.className = 'error-msg show'; return; }
-  if (!amount || amount <= 0) { errEl.textContent = 'Enter a valid amount'; errEl.className = 'error-msg show'; return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Sending...';
   try {
-    const txid = await rpc('sendtoaddress', [addr, amount]);
-    successEl.textContent = 'Sent! TX: ' + txid.substring(0, 16) + '...';
-    successEl.className = 'success-msg show';
+    const txid = await rpc('sendtoaddress', [addr, amt]);
+    alertEl.innerHTML = 'Sent! TXID: <span style="font-family:IBM Plex Mono,monospace;font-size:12px">' + txid.substring(0, 24) + '...</span>';
+    alertEl.className = 'alert success';
     document.getElementById('sendAddress').value = '';
     document.getElementById('sendAmount').value = '';
     refresh();
   } catch (e) {
-    errEl.textContent = e.message;
-    errEl.className = 'error-msg show';
+    alertEl.innerHTML = e.message;
+    alertEl.className = 'alert error';
   }
-
-  btn.disabled = false;
-  btn.textContent = 'Send ShardCoin';
+  btn.disabled = false; btn.textContent = 'Send SHRD';
 }
 
 // ── Receive ──
-async function generateAddress() {
+async function genAddr() {
   try {
     const addr = await rpc('getnewaddress');
-    document.getElementById('receiveAddress').textContent = addr;
-
+    document.getElementById('receiveAddr').textContent = addr;
     const container = document.getElementById('qrCode');
     container.innerHTML = '';
     const canvas = document.createElement('canvas');
     container.appendChild(canvas);
-    QRCode.toCanvas(canvas, addr, {
-      width: 200,
-      margin: 2,
-      color: { dark: '#07070c', light: '#ffffff' }
-    });
+    QRCode.toCanvas(canvas, addr, { width: 200, margin: 2, color: { dark: '#1e1e2e', light: '#ffffff' } });
   } catch (e) {
-    document.getElementById('receiveAddress').textContent = 'Connect to node first';
+    document.getElementById('receiveAddr').textContent = 'Connect to node first';
+    document.getElementById('qrCode').innerHTML = '';
   }
 }
 
-function copyAddress() {
-  const addr = document.getElementById('receiveAddress').textContent;
-  if (addr && addr !== 'Generating address...' && addr !== 'Connect to node first') {
+function copyAddr() {
+  const addr = document.getElementById('receiveAddr').textContent;
+  if (addr && !addr.includes('Connect') && !addr.includes('Generating')) {
     navigator.clipboard.writeText(addr);
-    const toast = document.getElementById('copyToast');
-    toast.className = 'copy-toast show';
-    setTimeout(() => toast.className = 'copy-toast', 2000);
+    showToast('Address copied to clipboard');
   }
 }
 
-// ── Modals ──
-function openModal(name) {
-  document.getElementById('modal-' + name).className = 'modal-overlay open';
-  if (name === 'receive') generateAddress();
-  if (name === 'settings') loadSettings();
-}
-
-function closeModal(name) {
-  document.getElementById('modal-' + name).className = 'modal-overlay';
-}
-
-function closeIfOverlay(e, name) {
-  if (e.target.classList.contains('modal-overlay')) closeModal(name);
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show';
+  setTimeout(() => t.className = 'toast', 2000);
 }
 
 // ── Settings ──
 function loadSettings() {
-  document.getElementById('settingsRpcUrl').value = config.rpcUrl;
-  document.getElementById('settingsRpcUser').value = config.rpcUser;
-  document.getElementById('settingsRpcPass').value = config.rpcPass;
-  document.getElementById('settingsWallet').value = config.wallet;
+  document.getElementById('setUrl').value = cfg.rpcUrl;
+  document.getElementById('setUser').value = cfg.rpcUser;
+  document.getElementById('setPass').value = cfg.rpcPass;
+  document.getElementById('setWallet').value = cfg.wallet;
 }
 
 function saveSettings() {
-  config.rpcUrl = document.getElementById('settingsRpcUrl').value.trim() || 'http://127.0.0.1:7332';
-  config.rpcUser = document.getElementById('settingsRpcUser').value.trim();
-  config.rpcPass = document.getElementById('settingsRpcPass').value.trim();
-  config.wallet = document.getElementById('settingsWallet').value.trim();
-  localStorage.setItem('shardwallet_config', JSON.stringify(config));
-  closeModal('settings');
+  cfg.rpcUrl = document.getElementById('setUrl').value.trim() || 'http://127.0.0.1:7332';
+  cfg.rpcUser = document.getElementById('setUser').value.trim();
+  cfg.rpcPass = document.getElementById('setPass').value.trim();
+  cfg.wallet = document.getElementById('setWallet').value.trim();
+  localStorage.setItem('shardwallet_config', JSON.stringify(cfg));
+  showToast('Settings saved');
+  navigate('account');
   refresh();
 }
 
-function switchTab(name) {
-  document.querySelectorAll('.nav-item').forEach((el, i) => {
-    el.classList.toggle('active', i === 0 && name === 'wallet');
-  });
+// ── Mobile sidebar toggle ──
+function toggleMobileSidebar() {
+  const s = document.getElementById('sidebar');
+  s.style.display = s.style.display === 'flex' ? 'none' : 'flex';
+  s.style.position = 'fixed';
+  s.style.zIndex = '200';
+  s.style.height = '100vh';
 }
 
 // ── Init ──
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
-
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 refresh();
-refreshTimer = setInterval(refresh, 10000);
+setInterval(refresh, 10000);
 </script>
 </body>
 </html>
