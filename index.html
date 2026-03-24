@@ -156,6 +156,65 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafc}
 /* Settings */
 .se{margin-bottom:24px}.se-h{font-size:14px;font-weight:600;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--brd)}
 
+/* ── Address Book ── */
+.ab-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--inp);border:1px solid var(--brd);border-radius:var(--r);margin-bottom:6px;cursor:pointer;transition:all .12s}
+.ab-item:hover{border-color:var(--acc);background:var(--acc-bg)}
+.ab-name{font-weight:600;font-size:13px}
+.ab-addr{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--tx3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ab-del{margin-left:auto;background:none;border:none;color:var(--tx3);font-size:16px;padding:4px 8px;border-radius:4px;transition:all .1s;flex-shrink:0}
+.ab-del:hover{color:var(--red);background:var(--red-bg)}
+.ab-empty{text-align:center;padding:24px;color:var(--tx3);font-size:13px}
+.ab-use{background:var(--acc);color:#fff;border:none;border-radius:4px;padding:4px 10px;font-size:11px;font-weight:600;flex-shrink:0;margin-left:auto;transition:all .1s}
+.ab-use:hover{background:var(--acc2)}
+
+/* ── Fee Selector ── */
+.fee-sel{display:flex;gap:6px;margin-bottom:4px}
+.fee-opt{flex:1;padding:8px 4px;border:1px solid var(--brd);border-radius:var(--r);background:var(--inp);text-align:center;font-size:11px;font-weight:500;color:var(--tx2);transition:all .12s;cursor:pointer}
+.fee-opt:hover{border-color:var(--acc)}
+.fee-opt.on{border-color:var(--acc);background:var(--acc-bg);color:var(--acc)}
+.fee-opt .fee-val{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;display:block;margin-bottom:1px}
+
+/* ── Send Max ── */
+.max-btn{background:var(--acc-bg);border:1px solid var(--acc-brd);border-radius:4px;padding:3px 8px;font-size:10px;font-weight:600;color:var(--acc);margin-left:6px;transition:all .1s}
+.max-btn:hover{background:var(--acc);color:#fff}
+
+/* ── Tx Detail Modal ── */
+.txd-ov{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.txd-ov.open{display:flex}
+.txd{background:var(--card);border:1px solid var(--brd);border-radius:var(--rl);max-width:480px;width:90%;max-height:80vh;overflow-y:auto;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.12);animation:su .25s ease}
+.txd-close{float:right;background:none;border:none;font-size:20px;color:var(--tx3);cursor:pointer;padding:2px 6px}
+.txd-close:hover{color:var(--tx)}
+.txd h3{font-size:16px;margin-bottom:16px}
+.txd-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f2f2f6;font-size:13px}
+.txd-row:last-child{border-bottom:none}
+.txd-k{color:var(--tx3);font-weight:500}
+.txd-v{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--tx);text-align:right;max-width:60%;word-break:break-all}
+.txd-v.cp{cursor:pointer;color:var(--acc)}
+.txd-v.cp:hover{text-decoration:underline}
+
+/* ── Export btn ── */
+.exp-btn{font-size:11px;background:var(--inp);border:1px solid var(--brd);border-radius:var(--r);padding:5px 12px;color:var(--tx2);font-weight:500;transition:all .1s}
+.exp-btn:hover{border-color:var(--acc);color:var(--acc)}
+
+/* ── Dark Mode ── */
+.dark{--bg:#0d0d1a;--card:#161628;--inp:#0e0e1e;--hdr:#161628;--brd:#252540;--inp-brd:#2a2a48;--tx:#e8e8f0;--tx2:#b0b0cc;--tx3:#6b6b8d;--tx4:#4a4a6a;--sh:0 1px 3px rgba(0,0,0,.2)}
+.dark th{background:#12121f}
+.dark td{border-bottom-color:#1e1e32}
+.dark tr:hover td{background:#1a1a2e}
+.dark .cd{border-color:#252540}
+.dark .st{border-color:#252540}
+.dark .txd{background:#161628;border-color:#252540}
+.dark .txd-row{border-bottom-color:#1e1e32}
+.dark .ab-item{background:#0e0e1e;border-color:#252540}
+.dark .fee-opt{background:#0e0e1e;border-color:#252540}
+
+/* Theme toggle */
+.theme-tog{display:flex;align-items:center;gap:8px;padding:10px 0}
+.tog{width:40px;height:22px;border-radius:11px;background:var(--brd);position:relative;cursor:pointer;border:none;transition:background .2s}
+.tog::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s}
+.tog.on{background:var(--acc)}
+.tog.on::after{transform:translateX(18px)}
+
 /* Toast */
 .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;padding:9px 22px;border-radius:100px;font-weight:600;font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 16px #7c5ce740}
 .toast.show{opacity:1}
@@ -272,6 +331,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafc}
       <button class="ni" data-p="recv"><span class="ic">&#8595;</span>Receive</button>
       <button class="ni" data-p="hist"><span class="ic">&#9776;</span>Transactions</button>
       <div class="sb-d"></div>
+      <button class="ni" data-p="book"><span class="ic">&#128209;</span>Address Book</button>
       <button class="ni" data-p="keys"><span class="ic">&#128273;</span>Keys &amp; Backup</button>
       <button class="ni" data-p="net"><span class="ic">&#9673;</span>Advanced</button>
       <button class="ni" data-p="set"><span class="ic">&#9881;</span>Settings</button>
@@ -298,8 +358,24 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafc}
       <div class="pg" id="pg-send">
         <div class="frm"><div class="cd" style="padding:22px">
           <div class="sec-badge">&#128274; Transaction signed locally - key never leaves browser</div>
-          <div class="fg"><label class="fl">Address</label><input class="fi" id="fAddr" placeholder="shrd1q..." autocomplete="off" spellcheck="false"></div>
-          <div class="fr"><div class="fg"><label class="fl">Amount</label><input class="fi fi-lg" id="fAmt" type="number" step="0.00000001" min="0" placeholder="0.00"><div class="fn">SHRD</div></div></div>
+          <div class="fg">
+            <label class="fl">Address <button class="max-btn" onclick="pickContact()" style="float:right">&#128209; Address Book</button></label>
+            <input class="fi" id="fAddr" placeholder="shrd1q..." autocomplete="off" spellcheck="false">
+          </div>
+          <div class="fg">
+            <label class="fl">Amount <button class="max-btn" onclick="sendMax()">MAX</button></label>
+            <input class="fi fi-lg" id="fAmt" type="number" step="0.00000001" min="0" placeholder="0.00">
+            <div class="fn">SHRD &middot; Available: <span id="fAvail">0.00</span></div>
+          </div>
+          <div class="fg">
+            <label class="fl">Fee Priority</label>
+            <div class="fee-sel">
+              <button class="fee-opt" data-fee="1" onclick="setFee(1,this)"><span class="fee-val">Low</span>~1 shard/vB</button>
+              <button class="fee-opt on" data-fee="5" onclick="setFee(5,this)"><span class="fee-val">Normal</span>~5 shard/vB</button>
+              <button class="fee-opt" data-fee="20" onclick="setFee(20,this)"><span class="fee-val">High</span>~20 shard/vB</button>
+            </div>
+            <div class="fn">Estimated fee: <span id="fFeeEst">~0.00001</span> SHRD</div>
+          </div>
           <div id="fMsg"></div>
           <button class="btn" id="fBtn" onclick="doSend()" style="width:100%;margin-top:6px">Send SHRD</button>
         </div></div>
@@ -318,7 +394,21 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafc}
 
       <!-- History -->
       <div class="pg" id="pg-hist">
-        <div class="cd"><div class="cd-h"><span class="cd-t">All Transactions</span></div><table><thead><tr><th>Type</th><th>Amount</th><th>Address</th><th>Date</th><th>Confirmations</th></tr></thead><tbody id="tH"><tr><td colspan="5" class="emp">No transactions yet</td></tr></tbody></table></div>
+        <div class="cd"><div class="cd-h"><span class="cd-t">All Transactions</span><button class="exp-btn" onclick="exportCSV()">&#8615; Export CSV</button></div><table><thead><tr><th>Type</th><th>Amount</th><th>Address</th><th>Date</th><th>Confirmations</th></tr></thead><tbody id="tH"><tr><td colspan="5" class="emp">No transactions yet</td></tr></tbody></table></div>
+      </div>
+
+      <!-- Address Book -->
+      <div class="pg" id="pg-book">
+        <div class="frm"><div class="cd" style="padding:22px">
+          <div class="se-h">Add Contact</div>
+          <div class="fr">
+            <div class="fg"><label class="fl">Name</label><input class="fi" id="abName" placeholder="Alice"></div>
+            <div class="fg"><label class="fl">Address</label><input class="fi" id="abAddr" placeholder="shrd1q..."></div>
+          </div>
+          <button class="btn" onclick="addContact()" style="width:100%;margin-bottom:16px">Add to Address Book</button>
+          <div class="se-h">Saved Contacts</div>
+          <div id="abList"><div class="ab-empty">No contacts saved</div></div>
+        </div></div>
       </div>
 
       <!-- Keys & Backup -->
@@ -358,6 +448,10 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafc}
           </div>
           <button class="btn" onclick="saveCfg()" style="width:100%">Save &amp; Reconnect</button>
           <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--brd)">
+            <div class="se-h">Appearance</div>
+            <div class="theme-tog"><span style="font-size:13px">Dark Mode</span><button class="tog" id="darkTog" onclick="toggleDark()"></button></div>
+          </div>
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--brd)">
             <div class="se-h" style="color:var(--red)">Danger Zone</div>
             <button class="btn" onclick="lockWallet()" style="width:100%;background:var(--tx3);margin-bottom:8px">Lock Wallet</button>
             <button class="btn" onclick="resetWallet()" style="width:100%;background:var(--red)">Reset Wallet (Delete All Data)</button>
@@ -377,6 +471,15 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafc}
     <button class="mn" data-p="set"><span class="ic">&#9881;</span>Settings</button>
   </div>
 </nav>
+
+<!-- Transaction Detail -->
+<div class="txd-ov" id="txDetail" onclick="if(event.target===this)this.className='txd-ov'">
+  <div class="txd">
+    <button class="txd-close" onclick="document.getElementById('txDetail').className='txd-ov'">&times;</button>
+    <h3>Transaction Details</h3>
+    <div id="txdBody"></div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -775,10 +878,12 @@ window.nav = (p) => {
   document.querySelectorAll('.ni,.mn').forEach(e => e.classList.remove('on'));
   document.getElementById('pg-'+p).classList.add('on');
   document.querySelectorAll(`[data-p="${p}"]`).forEach(e => e.classList.add('on'));
-  const t={dash:'Account',send:'Send',recv:'Receive',hist:'Transactions',keys:'Keys & Backup',net:'Advanced',set:'Settings'};
+  const t={dash:'Account',send:'Send',recv:'Receive',hist:'Transactions',book:'Address Book',keys:'Keys & Backup',net:'Advanced',set:'Settings'};
   document.getElementById('pT').textContent = t[p]||p;
   if (p === 'recv') showRecvAddr();
   if (p === 'set') loadCfg();
+  if (p === 'book') renderContacts();
+  if (p === 'send') updateAvail();
 };
 document.querySelectorAll('.ni,.mn').forEach(b => b.addEventListener('click', () => window.nav(b.dataset.p)));
 
@@ -821,14 +926,16 @@ async function refresh() {
   }
 }
 
+let allTxs = [];
 function renderTx(txs, id, lim) {
+  allTxs = txs || [];
   const tb = document.getElementById(id);
   if (!txs||!txs.length) { tb.innerHTML='<tr><td colspan="5" class="emp">No transactions yet</td></tr>'; return; }
-  tb.innerHTML = txs.slice(0,lim).map(tx => {
+  tb.innerHTML = txs.slice(0,lim).map((tx,i) => {
     const isIn = tx.category==='receive'||tx.category==='generate'||tx.category==='immature';
     const isM = tx.category==='generate'||tx.category==='immature';
     const c=isM?'m':(isIn?'i':'o'), ico=isM?'&#9670;':(isIn?'&#8595;':'&#8593;'), lbl=isM?'Mined':(isIn?'Received':'Sent');
-    return `<tr><td><span class="di"><span class="dk ${c}">${ico}</span>${lbl}</span></td><td><span class="am ${isIn?'pos':'neg'}">${isIn?'+':'-'}${fa(Math.abs(tx.amount))}</span></td><td><span class="ad">${tx.address||'coinbase'}</span></td><td><span class="ts">${ft(tx.time)}</span></td><td><span class="cf">${tx.confirmations||0}</span></td></tr>`;
+    return `<tr onclick="showTxDetail(${i})" style="cursor:pointer"><td><span class="di"><span class="dk ${c}">${ico}</span>${lbl}</span></td><td><span class="am ${isIn?'pos':'neg'}">${isIn?'+':'-'}${fa(Math.abs(tx.amount))}</span></td><td><span class="ad">${tx.address||'coinbase'}</span></td><td><span class="ts">${ft(tx.time)}</span></td><td><span class="cf">${tx.confirmations||0}</span></td></tr>`;
   }).join('');
 }
 
@@ -862,7 +969,7 @@ window.doSend = async () => {
     const pubkeys = utxosWithKeys.map(u => wallet.pubkeys[u.keyIdx]);
     const changeAddr = wallet.addresses[0]; // use first address for change
 
-    const rawTx = buildSignedTx(utxosWithKeys, addr, amt, changeAddr, 1, privkeys, pubkeys);
+    const rawTx = buildSignedTx(utxosWithKeys, addr, amt, changeAddr, selectedFee, privkeys, pubkeys);
     const txid = await rpc('sendrawtransaction', [rawTx]);
 
     msg.innerHTML='Sent! TX: <span style="font-family:IBM Plex Mono,monospace;font-size:10px">'+txid.substring(0,20)+'...</span>';
@@ -932,6 +1039,7 @@ function loadCfg() {
   document.getElementById('sUsr').value = nodeCfg.user;
   document.getElementById('sPwd').value = nodeCfg.pass;
   document.getElementById('sWal').value = nodeCfg.wal;
+  document.getElementById('darkTog').classList.toggle('on', document.body.classList.contains('dark'));
 }
 
 window.saveCfg = () => {
@@ -945,6 +1053,142 @@ window.saveCfg = () => {
   importWatchAddresses();
   refresh();
 };
+
+// ══════════════════════════════════════
+// ADDRESS BOOK
+// ══════════════════════════════════════
+function getContacts() { return JSON.parse(localStorage.getItem('sw_contacts') || '[]'); }
+function saveContacts(c) { localStorage.setItem('sw_contacts', JSON.stringify(c)); }
+
+window.addContact = () => {
+  const name = document.getElementById('abName').value.trim();
+  const addr = document.getElementById('abAddr').value.trim();
+  if (!name || !addr) { toast('Enter both name and address'); return; }
+  const contacts = getContacts();
+  contacts.push({ name, addr });
+  saveContacts(contacts);
+  document.getElementById('abName').value = '';
+  document.getElementById('abAddr').value = '';
+  renderContacts();
+  toast('Contact saved');
+};
+
+window.deleteContact = (i) => {
+  const contacts = getContacts();
+  contacts.splice(i, 1);
+  saveContacts(contacts);
+  renderContacts();
+};
+
+window.useContact = (addr) => {
+  document.getElementById('fAddr').value = addr;
+  window.nav('send');
+};
+
+function renderContacts() {
+  const el = document.getElementById('abList');
+  const contacts = getContacts();
+  if (!contacts.length) { el.innerHTML = '<div class="ab-empty">No contacts saved</div>'; return; }
+  el.innerHTML = contacts.map((c, i) =>
+    `<div class="ab-item">
+      <div style="min-width:0;flex:1"><div class="ab-name">${c.name}</div><div class="ab-addr">${c.addr}</div></div>
+      <button class="ab-use" onclick="useContact('${c.addr}')">Send</button>
+      <button class="ab-del" onclick="event.stopPropagation();deleteContact(${i})">&times;</button>
+    </div>`
+  ).join('');
+}
+
+window.pickContact = () => {
+  const contacts = getContacts();
+  if (!contacts.length) { toast('No contacts saved - add some in Address Book'); return; }
+  window.nav('book');
+};
+
+// ══════════════════════════════════════
+// FEE SELECTOR
+// ══════════════════════════════════════
+let selectedFee = 5;
+
+window.setFee = (rate, el) => {
+  selectedFee = rate;
+  document.querySelectorAll('.fee-opt').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  const estFee = (rate * 200) / 1e8;
+  document.getElementById('fFeeEst').textContent = '~' + fa(estFee);
+};
+
+// ══════════════════════════════════════
+// SEND MAX
+// ══════════════════════════════════════
+let cachedBal = 0;
+
+async function updateAvail() {
+  try {
+    const utxos = await getUTXOs();
+    cachedBal = utxos.reduce((s, u) => s + u.amount, 0);
+    document.getElementById('fAvail').textContent = fa(cachedBal);
+  } catch(e) {}
+}
+
+window.sendMax = () => {
+  const fee = (selectedFee * 200) / 1e8;
+  const max = Math.max(0, cachedBal - fee);
+  document.getElementById('fAmt').value = max > 0 ? max.toFixed(8) : '0';
+};
+
+// ══════════════════════════════════════
+// TRANSACTION DETAILS
+// ══════════════════════════════════════
+window.showTxDetail = (idx) => {
+  const tx = allTxs[idx];
+  if (!tx) return;
+  const isIn = tx.category === 'receive' || tx.category === 'generate' || tx.category === 'immature';
+  const body = document.getElementById('txdBody');
+  body.innerHTML = `
+    <div class="txd-row"><span class="txd-k">Type</span><span class="txd-v">${tx.category}</span></div>
+    <div class="txd-row"><span class="txd-k">Amount</span><span class="txd-v" style="color:${isIn?'var(--grn)':'var(--red)'}">${isIn?'+':''}${fa(tx.amount)} SHRD</span></div>
+    <div class="txd-row"><span class="txd-k">Address</span><span class="txd-v cp" onclick="navigator.clipboard.writeText('${tx.address||''}');toast('Copied')">${tx.address || 'coinbase'}</span></div>
+    <div class="txd-row"><span class="txd-k">TXID</span><span class="txd-v cp" onclick="navigator.clipboard.writeText('${tx.txid||''}');toast('Copied')" style="font-size:10px">${tx.txid || '-'}</span></div>
+    <div class="txd-row"><span class="txd-k">Confirmations</span><span class="txd-v">${tx.confirmations || 0}</span></div>
+    <div class="txd-row"><span class="txd-k">Block Hash</span><span class="txd-v" style="font-size:10px">${tx.blockhash || 'unconfirmed'}</span></div>
+    <div class="txd-row"><span class="txd-k">Time</span><span class="txd-v">${tx.time ? new Date(tx.time*1000).toLocaleString() : '-'}</span></div>
+    <div class="txd-row"><span class="txd-k">Fee</span><span class="txd-v">${tx.fee ? fa(Math.abs(tx.fee))+' SHRD' : '-'}</span></div>
+    <div class="txd-row"><span class="txd-k">Size</span><span class="txd-v">${tx.size ? tx.size+' bytes' : '-'}</span></div>
+  `;
+  document.getElementById('txDetail').className = 'txd-ov open';
+};
+
+// ══════════════════════════════════════
+// EXPORT CSV
+// ══════════════════════════════════════
+window.exportCSV = () => {
+  if (!allTxs.length) { toast('No transactions to export'); return; }
+  const header = 'Date,Type,Amount,Address,TXID,Confirmations,Fee\n';
+  const rows = allTxs.map(tx => {
+    const date = tx.time ? new Date(tx.time*1000).toISOString() : '';
+    return `"${date}","${tx.category}","${tx.amount}","${tx.address||'coinbase'}","${tx.txid||''}","${tx.confirmations||0}","${tx.fee||''}"`;
+  }).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'shardcoin-transactions.csv';
+  a.click(); URL.revokeObjectURL(url);
+  toast('CSV downloaded');
+};
+
+// ══════════════════════════════════════
+// DARK MODE
+// ══════════════════════════════════════
+window.toggleDark = () => {
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('sw_dark', isDark ? '1' : '0');
+  document.getElementById('darkTog').classList.toggle('on', isDark);
+};
+
+// Init dark mode from saved preference
+if (localStorage.getItem('sw_dark') === '1') {
+  document.body.classList.add('dark');
+}
 
 // ══════════════════════════════════════
 // UTILS
